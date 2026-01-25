@@ -1,0 +1,365 @@
+{% extends 'base.html' %}
+
+{% block title %}Form Builder - {{ form.title }}{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'form_list' %}">Forms</a></li>
+                <li class="breadcrumb-item active">{{ form.title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Left Panel: Field Types -->
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Add Field</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    {% for type_value, type_label in field_types %}
+                    <button type="button" class="btn btn-outline-secondary btn-sm text-start add-field-btn" data-type="{{ type_value }}">
+                        <i class="bi bi-input-cursor-text me-2"></i>{{ type_label }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-gear"></i> Form Settings</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Status:</strong> 
+                    {% if form.status == 'published' %}
+                    <span class="badge bg-success">Published</span>
+                    {% elif form.status == 'draft' %}
+                    <span class="badge bg-warning text-dark">Draft</span>
+                    {% else %}
+                    <span class="badge bg-secondary">Archived</span>
+                    {% endif %}
+                </p>
+                <a href="{% url 'form_edit' form.pk %}" class="btn btn-outline-primary btn-sm w-100">
+                    <i class="bi bi-pencil"></i> Edit Settings
+                </a>
+                {% if form.status == 'published' %}
+                <a href="{% url 'form_submit' form.slug %}" class="btn btn-success btn-sm w-100 mt-2" target="_blank">
+                    <i class="bi bi-eye"></i> Preview Form
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Center Panel: Form Preview -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-ui-checks-grid"></i> {{ form.title }}</h5>
+                <span class="text-muted">Drag to reorder</span>
+            </div>
+            <div class="card-body form-preview">
+                <div id="fields-container">
+                    {% for field in fields %}
+                    <div class="field-card card p-3" data-field-id="{{ field.id }}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <strong>{{ field.label }}</strong>
+                                {% if field.is_required %}<span class="text-danger">*</span>{% endif %}
+                                <br>
+                                <small class="text-muted">{{ field.get_field_type_display }} | Name: {{ field.name }}</small>
+                            </div>
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-outline-primary edit-field-btn" data-field-id="{{ field.id }}">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-danger delete-field-btn" data-field-id="{{ field.id }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-5 text-muted" id="empty-message">
+                        <i class="bi bi-inbox display-4"></i>
+                        <p class="mt-2">No fields yet. Add fields from the left panel.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Panel: Field Properties -->
+    <div class="col-md-3">
+        <div class="card" id="field-properties-panel" style="display: none;">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-sliders"></i> Field Properties</h5>
+            </div>
+            <div class="card-body">
+                <form id="field-form">
+                    <input type="hidden" id="field-id">
+                    <div class="mb-3">
+                        <label class="form-label">Label *</label>
+                        <input type="text" class="form-control" id="field-label" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Name *</label>
+                        <input type="text" class="form-control" id="field-name" required>
+                        <small class="text-muted">Used for data export</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <select class="form-select" id="field-type">
+                            {% for type_value, type_label in field_types %}
+                            <option value="{{ type_value }}">{{ type_label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Placeholder</label>
+                        <input type="text" class="form-control" id="field-placeholder">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Default Value</label>
+                        <input type="text" class="form-control" id="field-default">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="field-required">
+                        <label class="form-check-label" for="field-required">Required</label>
+                    </div>
+                    <div class="mb-3" id="options-container" style="display: none;">
+                        <label class="form-label">Options (JSON)</label>
+                        <textarea class="form-control" id="field-options" rows="4" placeholder='[{"value":"opt1","text":"Option 1"}]'></textarea>
+                        <small class="text-muted">For cascading: add "parentValue" key</small>
+                    </div>
+                    <div class="mb-3" id="parent-field-container" style="display: none;">
+                        <label class="form-label">Parent Field</label>
+                        <select class="form-select" id="field-parent">
+                            <option value="">None</option>
+                            {% for field in fields %}
+                            {% if field.field_type == 'select' %}
+                            <option value="{{ field.id }}">{{ field.label }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Visible Condition (JSON)</label>
+                        <input type="text" class="form-control" id="field-visible-condition" placeholder='{"field_name": "value"}'>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Enabled Condition (JSON)</label>
+                        <input type="text" class="form-control" id="field-enabled-condition" placeholder='{"field_name": "value"}'>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-check-lg"></i> Save Field
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Field Modal -->
+<div class="modal fade" id="addFieldModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Field</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-field-form">
+                    <input type="hidden" id="new-field-type">
+                    <div class="mb-3">
+                        <label class="form-label">Label *</label>
+                        <input type="text" class="form-control" id="new-field-label" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Name *</label>
+                        <input type="text" class="form-control" id="new-field-name" required>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="new-field-required">
+                        <label class="form-check-label" for="new-field-required">Required</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-new-field">Add Field</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const formPk = {{ form.pk }};
+const csrfToken = '{{ csrf_token }}';
+
+// Initialize Sortable for drag-and-drop reordering
+const container = document.getElementById('fields-container');
+new Sortable(container, {
+    animation: 150,
+    handle: '.field-card',
+    onEnd: function() {
+        const fieldIds = Array.from(container.querySelectorAll('.field-card'))
+            .map(el => parseInt(el.dataset.fieldId));
+        
+        fetch(`/forms/${formPk}/reorder-fields/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({field_ids: fieldIds})
+        });
+    }
+});
+
+// Add field buttons
+document.querySelectorAll('.add-field-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.getElementById('new-field-type').value = this.dataset.type;
+        document.getElementById('new-field-label').value = '';
+        document.getElementById('new-field-name').value = '';
+        document.getElementById('new-field-required').checked = false;
+        new bootstrap.Modal(document.getElementById('addFieldModal')).show();
+    });
+});
+
+// Auto-generate name from label
+document.getElementById('new-field-label').addEventListener('input', function() {
+    document.getElementById('new-field-name').value = this.value.toLowerCase().replace(/\s+/g, '_');
+});
+
+document.getElementById('field-label').addEventListener('input', function() {
+    if (!document.getElementById('field-id').value) {
+        document.getElementById('field-name').value = this.value.toLowerCase().replace(/\s+/g, '_');
+    }
+});
+
+// Save new field
+document.getElementById('save-new-field').addEventListener('click', function() {
+    const data = {
+        field_type: document.getElementById('new-field-type').value,
+        label: document.getElementById('new-field-label').value,
+        name: document.getElementById('new-field-name').value,
+        is_required: document.getElementById('new-field-required').checked
+    };
+    
+    fetch(`/forms/${formPk}/add-field/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(result => {
+        if (result.success) {
+            location.reload();
+        }
+    });
+});
+
+// Edit field
+document.querySelectorAll('.edit-field-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const fieldId = this.dataset.fieldId;
+        document.getElementById('field-properties-panel').style.display = 'block';
+        document.getElementById('field-id').value = fieldId;
+        // Load field data via API or from data attributes
+        // For simplicity, we'll reload on save
+    });
+});
+
+// Delete field
+document.querySelectorAll('.delete-field-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        if (confirm('Delete this field?')) {
+            fetch(`/fields/${this.dataset.fieldId}/delete/`, {
+                method: 'POST',
+                headers: {'X-CSRFToken': csrfToken}
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    location.reload();
+                }
+            });
+        }
+    });
+});
+
+// Show/hide options field based on type
+document.getElementById('field-type').addEventListener('change', function() {
+    const showOptions = ['select', 'radio', 'checkbox'].includes(this.value);
+    document.getElementById('options-container').style.display = showOptions ? 'block' : 'none';
+    document.getElementById('parent-field-container').style.display = this.value === 'select' ? 'block' : 'none';
+});
+
+// Save field form
+document.getElementById('field-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const fieldId = document.getElementById('field-id').value;
+    
+    let options = [];
+    try {
+        const optionsText = document.getElementById('field-options').value;
+        if (optionsText) options = JSON.parse(optionsText);
+    } catch(e) {}
+    
+    let visibleCondition = {};
+    try {
+        const vc = document.getElementById('field-visible-condition').value;
+        if (vc) visibleCondition = JSON.parse(vc);
+    } catch(e) {}
+    
+    let enabledCondition = {};
+    try {
+        const ec = document.getElementById('field-enabled-condition').value;
+        if (ec) enabledCondition = JSON.parse(ec);
+    } catch(e) {}
+    
+    const data = {
+        label: document.getElementById('field-label').value,
+        name: document.getElementById('field-name').value,
+        field_type: document.getElementById('field-type').value,
+        placeholder: document.getElementById('field-placeholder').value,
+        default_value: document.getElementById('field-default').value,
+        is_required: document.getElementById('field-required').checked,
+        options_json: options,
+        parent_field_id: document.getElementById('field-parent').value || null,
+        visible_condition: visibleCondition,
+        enabled_condition: enabledCondition
+    };
+    
+    fetch(`/fields/${fieldId}/update/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(result => {
+        if (result.success) {
+            location.reload();
+        }
+    });
+});
+</script>
+{% endblock %}

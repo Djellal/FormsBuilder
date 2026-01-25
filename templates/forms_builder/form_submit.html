@@ -1,0 +1,293 @@
+{% extends 'base.html' %}
+{% load form_extras %}
+
+{% block title %}{{ form.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">{{ form.title }}</h4>
+                {% if is_update %}<span class="badge bg-warning text-dark">Updating your submission</span>{% endif %}
+            </div>
+            <div class="card-body">
+                {% if form.description %}
+                <p class="text-muted mb-4">{{ form.description }}</p>
+                {% endif %}
+                
+                <form method="post" enctype="multipart/form-data" id="submission-form">
+                    {% csrf_token %}
+                    
+                    {% for field in fields %}
+                    <div class="mb-3 field-wrapper" 
+                         id="field-wrapper-{{ field.id }}"
+                         data-field-name="{{ field.name }}"
+                         data-visible-condition='{{ field.visible_condition|safe }}'
+                         data-enabled-condition='{{ field.enabled_condition|safe }}'>
+                        
+                        {% if field.field_type != 'hidden' %}
+                        <label for="field_{{ field.id }}" class="form-label">
+                            {{ field.label }}
+                            {% if field.is_required %}<span class="text-danger">*</span>{% endif %}
+                        </label>
+                        {% endif %}
+                        
+                        {% if field.field_type == 'text' %}
+                        <input type="text" class="form-control" 
+                               name="field_{{ field.id }}" id="field_{{ field.id }}"
+                               placeholder="{{ field.placeholder }}"
+                               value="{{ prefill_data|get_item:field.id|default:field.default_value }}"
+                               {% if field.is_required %}required{% endif %}>
+                        
+                        {% elif field.field_type == 'email' %}
+                        <input type="email" class="form-control"
+                               name="field_{{ field.id }}" id="field_{{ field.id }}"
+                               placeholder="{{ field.placeholder }}"
+                               value="{{ prefill_data|get_item:field.id|default:field.default_value }}"
+                               {% if field.is_required %}required{% endif %}>
+                        
+                        {% elif field.field_type == 'number' %}
+                        <input type="number" class="form-control"
+                               name="field_{{ field.id }}" id="field_{{ field.id }}"
+                               placeholder="{{ field.placeholder }}"
+                               value="{{ prefill_data|get_item:field.id|default:field.default_value }}"
+                               {% if field.is_required %}required{% endif %}>
+                        
+                        {% elif field.field_type == 'textarea' %}
+                        <textarea class="form-control"
+                                  name="field_{{ field.id }}" id="field_{{ field.id }}"
+                                  placeholder="{{ field.placeholder }}"
+                                  rows="4"
+                                  {% if field.is_required %}required{% endif %}>{{ prefill_data|get_item:field.id|default:field.default_value }}</textarea>
+                        
+                        {% elif field.field_type == 'select' %}
+                        <select class="form-select"
+                                name="field_{{ field.id }}" id="field_{{ field.id }}"
+                                data-parent-field="{{ field.parent_field_id|default:'' }}"
+                                {% if field.is_required %}required{% endif %}>
+                            <option value="">-- Select --</option>
+                            {% for opt in field.options_json %}
+                            <option value="{{ opt.value }}" data-parent-value="{{ opt.parentValue|default:'' }}">
+                                {{ opt.text }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        
+                        {% elif field.field_type == 'radio' %}
+                        {% for opt in field.options_json %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio"
+                                   name="field_{{ field.id }}" 
+                                   id="field_{{ field.id }}_{{ forloop.counter }}"
+                                   value="{{ opt.value }}"
+                                   {% if field.is_required %}required{% endif %}>
+                            <label class="form-check-label" for="field_{{ field.id }}_{{ forloop.counter }}">
+                                {{ opt.text }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                        
+                        {% elif field.field_type == 'checkbox' %}
+                        {% for opt in field.options_json %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox"
+                                   name="field_{{ field.id }}"
+                                   id="field_{{ field.id }}_{{ forloop.counter }}"
+                                   value="{{ opt.value }}">
+                            <label class="form-check-label" for="field_{{ field.id }}_{{ forloop.counter }}">
+                                {{ opt.text }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                        
+                        {% elif field.field_type == 'date' %}
+                        <input type="date" class="form-control"
+                               name="field_{{ field.id }}" id="field_{{ field.id }}"
+                               value="{{ field.default_value }}"
+                               {% if field.is_required %}required{% endif %}>
+                        
+                        {% elif field.field_type == 'time' %}
+                        <input type="time" class="form-control"
+                               name="field_{{ field.id }}" id="field_{{ field.id }}"
+                               value="{{ field.default_value }}"
+                               {% if field.is_required %}required{% endif %}>
+                        
+                        {% elif field.field_type == 'phone' %}
+                        <input type="tel" class="form-control"
+                               name="field_{{ field.id }}" id="field_{{ field.id }}"
+                               placeholder="{{ field.placeholder }}"
+                               value="{{ field.default_value }}"
+                               {% if field.is_required %}required{% endif %}>
+                        
+                        {% elif field.field_type == 'url' %}
+                        <input type="url" class="form-control"
+                               name="field_{{ field.id }}" id="field_{{ field.id }}"
+                               placeholder="{{ field.placeholder }}"
+                               value="{{ field.default_value }}"
+                               {% if field.is_required %}required{% endif %}>
+                        
+                        {% elif field.field_type == 'password' %}
+                        <input type="password" class="form-control"
+                               name="field_{{ field.id }}" id="field_{{ field.id }}"
+                               placeholder="{{ field.placeholder }}"
+                               {% if field.is_required %}required{% endif %}>
+                        
+                        {% elif field.field_type == 'hidden' %}
+                        <input type="hidden"
+                               name="field_{{ field.id }}" id="field_{{ field.id }}"
+                               value="{{ field.default_value }}">
+                        
+                        {% elif field.field_type == 'file' %}
+                        <input type="file" class="form-control"
+                               name="field_{{ field.id }}" id="field_{{ field.id }}"
+                               {% if field.is_required %}required{% endif %}>
+                        
+                        {% elif field.field_type == 'select_faculte' %}
+                        <select class="form-select faculte-select"
+                                name="field_{{ field.id }}" id="field_{{ field.id }}"
+                                {% if field.is_required %}required{% endif %}>
+                            <option value="">-- Select Faculte --</option>
+                        </select>
+                        
+                        {% elif field.field_type == 'select_domaine' %}
+                        <select class="form-select domaine-select"
+                                name="field_{{ field.id }}" id="field_{{ field.id }}"
+                                {% if field.is_required %}required{% endif %}>
+                            <option value="">-- Select Domaine --</option>
+                        </select>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-send"></i> Submit
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load Facultes
+    const faculteSelects = document.querySelectorAll('.faculte-select');
+    if (faculteSelects.length > 0) {
+        fetch('/api/facultes/')
+            .then(r => r.json())
+            .then(facultes => {
+                faculteSelects.forEach(select => {
+                    facultes.forEach(f => {
+                        const opt = document.createElement('option');
+                        opt.value = f.id;
+                        opt.textContent = f.nom;
+                        select.appendChild(opt);
+                    });
+                });
+            });
+    }
+    
+    // Faculte change -> load Domaines
+    faculteSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            const faculteId = this.value;
+            document.querySelectorAll('.domaine-select').forEach(ds => {
+                ds.innerHTML = '<option value="">-- Select Domaine --</option>';
+                if (faculteId) {
+                    fetch(`/api/domaines/?faculte_id=${faculteId}`)
+                        .then(r => r.json())
+                        .then(domaines => {
+                            domaines.forEach(d => {
+                                const opt = document.createElement('option');
+                                opt.value = d.id;
+                                opt.textContent = d.nom;
+                                ds.appendChild(opt);
+                            });
+                        });
+                }
+            });
+        });
+    });
+    
+    // Cascading select fields
+    document.querySelectorAll('select[data-parent-field]').forEach(select => {
+        const parentId = select.dataset.parentField;
+        if (parentId) {
+            const parentSelect = document.querySelector(`select[name="field_${parentId}"]`);
+            if (parentSelect) {
+                const allOptions = Array.from(select.querySelectorAll('option'));
+                
+                parentSelect.addEventListener('change', function() {
+                    const parentValue = this.value;
+                    select.innerHTML = '<option value="">-- Select --</option>';
+                    allOptions.forEach(opt => {
+                        if (!opt.value || opt.dataset.parentValue === parentValue) {
+                            select.appendChild(opt.cloneNode(true));
+                        }
+                    });
+                });
+                
+                // Trigger initial filter
+                parentSelect.dispatchEvent(new Event('change'));
+            }
+        }
+    });
+    
+    // Conditional visibility and enabling
+    function evaluateConditions() {
+        document.querySelectorAll('.field-wrapper').forEach(wrapper => {
+            const visibleCondition = wrapper.dataset.visibleCondition;
+            const enabledCondition = wrapper.dataset.enabledCondition;
+            
+            if (visibleCondition && visibleCondition !== '{}') {
+                try {
+                    const condition = JSON.parse(visibleCondition);
+                    let visible = true;
+                    for (const [fieldName, expectedValue] of Object.entries(condition)) {
+                        const targetWrapper = document.querySelector(`[data-field-name="${fieldName}"]`);
+                        if (targetWrapper) {
+                            const input = targetWrapper.querySelector('input, select, textarea');
+                            if (input && input.value !== expectedValue) {
+                                visible = false;
+                                break;
+                            }
+                        }
+                    }
+                    wrapper.style.display = visible ? 'block' : 'none';
+                } catch(e) {}
+            }
+            
+            if (enabledCondition && enabledCondition !== '{}') {
+                try {
+                    const condition = JSON.parse(enabledCondition);
+                    let enabled = true;
+                    for (const [fieldName, expectedValue] of Object.entries(condition)) {
+                        const targetWrapper = document.querySelector(`[data-field-name="${fieldName}"]`);
+                        if (targetWrapper) {
+                            const input = targetWrapper.querySelector('input, select, textarea');
+                            if (input && input.value !== expectedValue) {
+                                enabled = false;
+                                break;
+                            }
+                        }
+                    }
+                    const inputs = wrapper.querySelectorAll('input, select, textarea');
+                    inputs.forEach(inp => inp.disabled = !enabled);
+                } catch(e) {}
+            }
+        });
+    }
+    
+    // Listen for changes on all inputs
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        el.addEventListener('change', evaluateConditions);
+    });
+    
+    // Initial evaluation
+    evaluateConditions();
+});
+</script>
+{% endblock %}

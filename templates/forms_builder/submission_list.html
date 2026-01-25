@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Submissions - {{ form.title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'form_list' %}">Forms</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'form_builder' form.pk %}">{{ form.title }}</a></li>
+                <li class="breadcrumb-item active">Submissions</li>
+            </ol>
+        </nav>
+        <h2 class="mt-2"><i class="bi bi-inbox"></i> Submissions</h2>
+    </div>
+    <a href="{% url 'export_csv' form.pk %}" class="btn btn-success">
+        <i class="bi bi-download"></i> Export CSV
+    </a>
+</div>
+
+{% if submissions %}
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Submitted At</th>
+                        <th>Submitted By</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for submission in submissions %}
+                    <tr>
+                        <td>{{ submission.id }}</td>
+                        <td>{{ submission.submitted_at|date:"M d, Y H:i" }}</td>
+                        <td>{{ submission.submitted_by.username|default:"Anonymous" }}</td>
+                        <td>
+                            {% if submission.status == 'pending' %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                            {% elif submission.status == 'approved' %}
+                            <span class="badge bg-success">Approved</span>
+                            {% else %}
+                            <span class="badge bg-danger">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'submission_detail' submission.pk %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="text-center py-5">
+    <i class="bi bi-inbox display-1 text-muted"></i>
+    <h4 class="mt-3">No submissions yet</h4>
+    <p class="text-muted">Share your form to start collecting responses.</p>
+    {% if form.status == 'published' %}
+    <div class="input-group justify-content-center">
+        <span class="input-group-text">Public URL</span>
+        <input type="text" class="form-control" style="max-width: 400px;" 
+               value="{{ request.scheme }}://{{ request.get_host }}{% url 'form_submit' form.slug %}" readonly>
+    </div>
+    {% else %}
+    <p class="text-warning"><i class="bi bi-exclamation-triangle"></i> Your form is not published yet.</p>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

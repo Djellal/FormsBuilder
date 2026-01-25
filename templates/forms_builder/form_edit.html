@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Form - Ufas1Forms{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-pencil"></i> Edit Form</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_title" class="form-label">Title *</label>
+                        <input type="text" name="title" class="form-control" id="id_title" value="{{ object.title }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_description" class="form-label">Description</label>
+                        <textarea name="description" class="form-control" id="id_description" rows="3">{{ object.description }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_form_type" class="form-label">Form Type *</label>
+                        <select name="form_type" class="form-select" id="id_form_type" required>
+                            <option value="registration" {% if object.form_type == 'registration' %}selected{% endif %}>Registration</option>
+                            <option value="survey" {% if object.form_type == 'survey' %}selected{% endif %}>Survey</option>
+                            <option value="data_collection" {% if object.form_type == 'data_collection' %}selected{% endif %}>Data Collection</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_status" class="form-label">Status *</label>
+                        <select name="status" class="form-select" id="id_status" required>
+                            <option value="draft" {% if object.status == 'draft' %}selected{% endif %}>Draft</option>
+                            <option value="published" {% if object.status == 'published' %}selected{% endif %}>Published</option>
+                            <option value="archived" {% if object.status == 'archived' %}selected{% endif %}>Archived</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_access_level" class="form-label">Access Level *</label>
+                        <select name="access_level" class="form-select" id="id_access_level" required>
+                            <option value="public" {% if object.access_level == 'public' %}selected{% endif %}>Public (No authentication required)</option>
+                            <option value="authenticated" {% if object.access_level == 'authenticated' %}selected{% endif %}>Authenticated users only</option>
+                        </select>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="single_submission" id="id_single_submission" {% if object.single_submission %}checked{% endif %}>
+                        <label class="form-check-label" for="id_single_submission">Single submission per user</label>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="allow_update" id="id_allow_update" {% if object.allow_update %}checked{% endif %}>
+                        <label class="form-check-label" for="id_allow_update">Allow users to update their submission</label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Public URL</label>
+                        <div class="input-group">
+                            <span class="input-group-text">{{ request.scheme }}://{{ request.get_host }}/f/</span>
+                            <input type="text" class="form-control" value="{{ object.slug }}" readonly>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Save Changes
+                        </button>
+                        <a href="{% url 'form_builder' object.pk %}" class="btn btn-outline-primary">
+                            <i class="bi bi-tools"></i> Form Builder
+                        </a>
+                        <a href="{% url 'form_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4 border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Danger Zone</h5>
+            </div>
+            <div class="card-body">
+                <p>Deleting this form will also delete all its fields and submissions.</p>
+                <a href="{% url 'form_delete' object.pk %}" class="btn btn-outline-danger">
+                    <i class="bi bi-trash"></i> Delete Form
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

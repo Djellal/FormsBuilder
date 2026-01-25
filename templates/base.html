@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Ufas1Forms{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background: #f8f9fa;
+        }
+        .field-card {
+            cursor: move;
+            border: 1px solid #dee2e6;
+            margin-bottom: 0.5rem;
+        }
+        .field-card:hover {
+            border-color: #0d6efd;
+        }
+        .form-preview {
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 1.5rem;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'dashboard' %}">
+                <i class="bi bi-ui-checks-grid"></i> Ufas1Forms
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                {% if user.is_authenticated %}
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    </li>
+                    {% if is_form_admin %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'form_list' %}"><i class="bi bi-collection"></i> My Forms</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'form_create' %}"><i class="bi bi-plus-circle"></i> Create Form</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            {% if user.is_staff %}
+                            <li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bi bi-gear"></i> Admin</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% endif %}
+                            <li>
+                                <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right"></i> Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                {% else %}
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}"><i class="bi bi-person-plus"></i> Register</a>
+                    </li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="py-4">
+        <div class="container-fluid">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

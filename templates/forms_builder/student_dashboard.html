@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}My Dashboard - Ufas1Forms{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-person-circle"></i> My Dashboard</h2>
+        <p class="text-muted">Welcome, {{ user.first_name|default:user.username }}!</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-inbox"></i> My Submissions</h5>
+            </div>
+            <div class="card-body">
+                {% if submissions %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Form</th>
+                                <th>Submitted At</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sub in submissions %}
+                            <tr>
+                                <td>{{ sub.form.title }}</td>
+                                <td>{{ sub.submitted_at|date:"M d, Y H:i" }}</td>
+                                <td>
+                                    {% if sub.status == 'pending' %}
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                    {% elif sub.status == 'approved' %}
+                                    <span class="badge bg-success">Approved</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'my_submission' sub.form.slug %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                    {% if sub.form.allow_update %}
+                                    <a href="{% url 'form_submit' sub.form.slug %}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox display-1 text-muted"></i>
+                    <h4 class="mt-3">No submissions yet</h4>
+                    <p class="text-muted">You haven't submitted any forms yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-collection"></i> Available Forms</h5>
+            </div>
+            <div class="card-body">
+                {% if available_forms %}
+                <div class="list-group list-group-flush">
+                    {% for form in available_forms %}
+                    <a href="{% url 'form_submit' form.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ form.title }}</strong>
+                            <br><small class="text-muted">{{ form.get_form_type_display }}</small>
+                        </div>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-3 mb-0">No forms available at the moment.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

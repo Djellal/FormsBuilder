@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Ufas1Forms{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-speedometer2"></i> Dashboard</h2>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-collection"></i> Total Forms</h5>
+                <h2>{{ forms.count }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-check-circle"></i> Published Forms</h5>
+                <h2>{{ forms|dictsort:"status"|length }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-inbox"></i> Total Submissions</h5>
+                <h2>{{ recent_submissions.count }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-collection"></i> My Forms</h5>
+                <a href="{% url 'form_create' %}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-plus"></i> New Form
+                </a>
+            </div>
+            <div class="card-body">
+                {% if forms %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Submissions</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for form in forms %}
+                            <tr>
+                                <td>{{ form.title }}</td>
+                                <td><span class="badge bg-secondary">{{ form.get_form_type_display }}</span></td>
+                                <td>
+                                    {% if form.status == 'published' %}
+                                    <span class="badge bg-success">Published</span>
+                                    {% elif form.status == 'draft' %}
+                                    <span class="badge bg-warning">Draft</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Archived</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ form.submission_count }}</td>
+                                <td>
+                                    <a href="{% url 'form_builder' form.pk %}" class="btn btn-sm btn-outline-primary" title="Builder">
+                                        <i class="bi bi-tools"></i>
+                                    </a>
+                                    <a href="{% url 'submission_list' form.pk %}" class="btn btn-sm btn-outline-info" title="Submissions">
+                                        <i class="bi bi-inbox"></i>
+                                    </a>
+                                    {% if form.status == 'published' %}
+                                    <a href="{% url 'form_submit' form.slug %}" class="btn btn-sm btn-outline-success" title="View Form" target="_blank">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-4">No forms yet. <a href="{% url 'form_create' %}">Create your first form</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Submissions</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_submissions %}
+                <ul class="list-group list-group-flush">
+                    {% for sub in recent_submissions %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">{{ sub.submitted_at|date:"M d, H:i" }}</small><br>
+                            {{ sub.form.title|truncatechars:30 }}
+                        </div>
+                        <a href="{% url 'submission_detail' sub.pk %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted text-center py-3">No submissions yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Form - Ufas1Forms{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Delete Form</h4>
+            </div>
+            <div class="card-body">
+                <p>Are you sure you want to delete <strong>{{ object.title }}</strong>?</p>
+                <p class="text-danger">This action cannot be undone. All fields and {{ object.submissions.count }} submissions will be permanently deleted.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                        <a href="{% url 'form_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
