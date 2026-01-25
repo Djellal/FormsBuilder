@@ -25,6 +25,17 @@ def is_admin(user):
     return user.is_staff or user.groups.filter(name='admin').exists()
 
 
+def home(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    
+    public_forms = Form.objects.filter(
+        status=FormStatus.PUBLISHED,
+        access_level=FormAccess.PUBLIC
+    )
+    return render(request, 'forms_builder/home.html', {'forms': public_forms})
+
+
 def register(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
