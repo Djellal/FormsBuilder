@@ -6,7 +6,7 @@ SECRET_KEY = 'django-insecure-change-this-in-production-xyz123'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 'forms.univ-setif.dz']
 
 INSTALLED_APPS = [
     'django.contrib.admin',

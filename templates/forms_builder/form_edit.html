@@ -4,110 +4,164 @@
 {% block title %}Edit Form - Ufas1Forms{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="mb-0"><i class="bi bi-pencil"></i> Edit Form</h4>
-            </div>
-            <div class="card-body">
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="{{ form.title.id_for_label }}" class="form-label">Title *</label>
-                        {{ form.title }}
-                        {% if form.title.errors %}
-                            <div class="text-danger">{{ form.title.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="mb-3">
-                        <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
-                        {{ form.description }}
-                        {% if form.description.errors %}
-                            <div class="text-danger">{{ form.description.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="mb-3">
-                        <label for="{{ form.form_type.id_for_label }}" class="form-label">Form Type *</label>
-                        {{ form.form_type }}
-                        {% if form.form_type.errors %}
-                            <div class="text-danger">{{ form.form_type.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="mb-3">
-                        <label for="{{ form.status.id_for_label }}" class="form-label">Status *</label>
-                        {{ form.status }}
-                        {% if form.status.errors %}
-                            <div class="text-danger">{{ form.status.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="mb-3">
-                        <label for="{{ form.access_level.id_for_label }}" class="form-label">Access Level *</label>
-                        {{ form.access_level }}
-                        {% if form.access_level.errors %}
-                            <div class="text-danger">{{ form.access_level.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="mb-3">
-                        <div class="form-check">
-                            {{ form.single_submission }}
-                            <label class="form-check-label" for="{{ form.single_submission.id_for_label }}">Single submission per user</label>
-                        </div>
-                        {% if form.single_submission.errors %}
-                            <div class="text-danger">{{ form.single_submission.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="mb-3">
-                        <div class="form-check">
-                            {{ form.allow_update }}
-                            <label class="form-check-label" for="{{ form.allow_update.id_for_label }}">Allow users to update their submission</label>
-                        </div>
-                        {% if form.allow_update.errors %}
-                            <div class="text-danger">{{ form.allow_update.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="mb-3">
-                        <label for="{{ form.image.id_for_label }}" class="form-label">Form Image</label>
-                        {% if form.instance.image %}
-                            <div class="mb-2">
-                                <img src="{{ form.instance.image.url }}" alt="Current form image" class="img-thumbnail" style="max-height: 150px;">
-                            </div>
-                        {% endif %}
-                        {{ form.image }}
-                        <div class="form-text">Upload an image for this form (optional)</div>
-                        {% if form.image.errors %}
-                            <div class="text-danger">{{ form.image.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Public URL</label>
-                        <div class="input-group">
-                            <span class="input-group-text">{{ request.scheme }}://{{ request.get_host }}/f/</span>
-                            <input type="text" class="form-control" value="{{ object.slug }}" readonly>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-lg"></i> Save Changes
-                        </button>
-                        <a href="{% url 'form_builder' object.pk %}" class="btn btn-outline-primary">
-                            <i class="bi bi-tools"></i> Form Builder
-                        </a>
-                        <a href="{% url 'form_list' %}" class="btn btn-outline-secondary">Cancel</a>
-                    </div>
-                </form>
-            </div>
+<div class="container-fluid px-4">
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'form_list' %}">My Forms</a></li>
+                    <li class="breadcrumb-item active">Edit Form</li>
+                </ol>
+            </nav>
         </div>
+    </div>
 
-        <div class="card mt-4 border-danger">
-            <div class="card-header bg-danger text-white">
-                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Danger Zone</h5>
+    <div class="row justify-content-center">
+        <div class="col-xl-8 col-lg-10">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-primary text-white rounded-top-3 py-3">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-pencil me-2 fs-4"></i>
+                        <h4 class="mb-0">Edit Form</h4>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-4">
+                                    <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">Title *</label>
+                                    {{ form.title }}
+                                    {% if form.title.errors %}
+                                        <div class="text-danger mt-1">{{ form.title.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">Enter a descriptive title for your form</div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">Description</label>
+                                    {{ form.description }}
+                                    {% if form.description.errors %}
+                                        <div class="text-danger mt-1">{{ form.description.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">Provide a detailed description of your form's purpose</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-4">
+                                    <label for="{{ form.form_type.id_for_label }}" class="form-label fw-semibold">Form Type *</label>
+                                    {{ form.form_type }}
+                                    {% if form.form_type.errors %}
+                                        <div class="text-danger mt-1">{{ form.form_type.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="{{ form.status.id_for_label }}" class="form-label fw-semibold">Status *</label>
+                                    {{ form.status }}
+                                    {% if form.status.errors %}
+                                        <div class="text-danger mt-1">{{ form.status.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label for="{{ form.access_level.id_for_label }}" class="form-label fw-semibold">Access Level *</label>
+                                    {{ form.access_level }}
+                                    {% if form.access_level.errors %}
+                                        <div class="text-danger mt-1">{{ form.access_level.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">Public URL</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">{{ request.scheme }}://{{ request.get_host }}/f/</span>
+                                        <input type="text" class="form-control" value="{{ object.slug }}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    {{ form.single_submission }}
+                                    <label class="form-check-label fw-semibold" for="{{ form.single_submission.id_for_label }}">Single submission per user</label>
+                                </div>
+                                {% if form.single_submission.errors %}
+                                    <div class="text-danger">{{ form.single_submission.errors }}</div>
+                                {% endif %}
+                                <div class="form-text">Check this if users should only be able to submit this form once</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    {{ form.allow_update }}
+                                    <label class="form-check-label fw-semibold" for="{{ form.allow_update.id_for_label }}">Allow users to update their submission</label>
+                                </div>
+                                {% if form.allow_update.errors %}
+                                    <div class="text-danger">{{ form.allow_update.errors }}</div>
+                                {% endif %}
+                                <div class="form-text">Check this if users should be able to edit their submission after submitting</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.image.id_for_label }}" class="form-label fw-semibold">Form Image</label>
+                            {% if form.instance.image %}
+                                <div class="mb-3">
+                                    <img src="{{ form.instance.image.url }}" alt="Current form image" class="img-thumbnail rounded shadow-sm" style="max-height: 150px; object-fit: cover;">
+                                </div>
+                            {% endif %}
+                            {{ form.image }}
+                            {% if form.image.errors %}
+                                <div class="text-danger mt-1">{{ form.image.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">Upload an image for this form (optional, supports JPG, PNG, GIF)</div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-3 pt-3">
+                            <button type="submit" class="btn btn-primary btn-lg flex-fill py-2">
+                                <i class="bi bi-check-lg me-2"></i>Save Changes
+                            </button>
+                            <a href="{% url 'form_builder' object.pk %}" class="btn btn-outline-primary btn-lg flex-fill py-2">
+                                <i class="bi bi-tools me-2"></i>Form Builder
+                            </a>
+                            <a href="{% url 'form_list' %}" class="btn btn-outline-secondary btn-lg flex-fill py-2">
+                                <i class="bi bi-x me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="card-body">
-                <p>Deleting this form will also delete all its fields and submissions.</p>
-                <a href="{% url 'form_delete' object.pk %}" class="btn btn-outline-danger">
-                    <i class="bi bi-trash"></i> Delete Form
-                </a>
+
+            <div class="card shadow-sm border-0 rounded-3 mt-4 border-danger">
+                <div class="card-header bg-danger text-white rounded-top-3 py-3">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle me-2 fs-4"></i>
+                        <h5 class="mb-0">Danger Zone</h5>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-warning" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> Deleting this form will permanently remove all associated fields and submissions.
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <a href="{% url 'form_delete' object.pk %}" class="btn btn-outline-danger btn-lg px-4 py-2">
+                            <i class="bi bi-trash me-2"></i>Delete Form
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
