@@ -24,3 +24,17 @@ class FormForm(forms.ModelForm):
             'form_type': forms.Select(attrs={'class': 'form-select'}),
             'image': forms.FileInput(attrs={'class': 'form-control'})
         }
+
+
+class FormUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Form
+        fields = ['title', 'description', 'form_type', 'status', 'access_level', 'single_submission', 'allow_update', 'image']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'form_type': forms.Select(attrs={'class': 'form-select'}),
+            'status': forms.Select(attrs={'class': 'form-select'}),
+            'access_level': forms.Select(attrs={'class': 'form-select'}),
+            'image': forms.FileInput(attrs={'class': 'form-control'})
+        }

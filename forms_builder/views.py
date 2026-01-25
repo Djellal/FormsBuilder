@@ -10,7 +10,7 @@ import csv
 import json
 
 from .models import Form, FormField, FormSubmission, FormAnswer, UploadedFile, FormStatus, FieldType, FormAccess
-from .forms import StudentRegistrationForm, FormForm
+from .forms import StudentRegistrationForm, FormForm, FormUpdateForm
 from academic.models import Faculte, Domaine
 from django.contrib.auth.models import Group
 from django.contrib.auth import login
@@ -88,7 +88,6 @@ class FormListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
 
 
 class FormCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
-    model = Form
     form_class = FormForm
     template_name = 'forms_builder/form_create.html'
     success_url = reverse_lazy('form_list')

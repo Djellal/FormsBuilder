@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Edit Form - Ufas1Forms{% endblock %}
 
@@ -10,56 +11,73 @@
                 <h4 class="mb-0"><i class="bi bi-pencil"></i> Edit Form</h4>
             </div>
             <div class="card-body">
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="id_title" class="form-label">Title *</label>
-                        <input type="text" name="title" class="form-control" id="id_title" value="{{ object.title }}" required>
+                        <label for="{{ form.title.id_for_label }}" class="form-label">Title *</label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <div class="text-danger">{{ form.title.errors }}</div>
+                        {% endif %}
                     </div>
                     <div class="mb-3">
-                        <label for="id_description" class="form-label">Description</label>
-                        <textarea name="description" class="form-control" id="id_description" rows="3">{{ object.description }}</textarea>
+                        <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="text-danger">{{ form.description.errors }}</div>
+                        {% endif %}
                     </div>
                     <div class="mb-3">
-                        <label for="id_form_type" class="form-label">Form Type *</label>
-                        <select name="form_type" class="form-select" id="id_form_type" required>
-                            <option value="registration" {% if object.form_type == 'registration' %}selected{% endif %}>Registration</option>
-                            <option value="survey" {% if object.form_type == 'survey' %}selected{% endif %}>Survey</option>
-                            <option value="data_collection" {% if object.form_type == 'data_collection' %}selected{% endif %}>Data Collection</option>
-                        </select>
+                        <label for="{{ form.form_type.id_for_label }}" class="form-label">Form Type *</label>
+                        {{ form.form_type }}
+                        {% if form.form_type.errors %}
+                            <div class="text-danger">{{ form.form_type.errors }}</div>
+                        {% endif %}
                     </div>
                     <div class="mb-3">
-                        <label for="id_status" class="form-label">Status *</label>
-                        <select name="status" class="form-select" id="id_status" required>
-                            <option value="draft" {% if object.status == 'draft' %}selected{% endif %}>Draft</option>
-                            <option value="published" {% if object.status == 'published' %}selected{% endif %}>Published</option>
-                            <option value="archived" {% if object.status == 'archived' %}selected{% endif %}>Archived</option>
-                        </select>
+                        <label for="{{ form.status.id_for_label }}" class="form-label">Status *</label>
+                        {{ form.status }}
+                        {% if form.status.errors %}
+                            <div class="text-danger">{{ form.status.errors }}</div>
+                        {% endif %}
                     </div>
                     <div class="mb-3">
-                        <label for="id_access_level" class="form-label">Access Level *</label>
-                        <select name="access_level" class="form-select" id="id_access_level" required>
-                            <option value="public" {% if object.access_level == 'public' %}selected{% endif %}>Public (No authentication required)</option>
-                            <option value="authenticated" {% if object.access_level == 'authenticated' %}selected{% endif %}>Authenticated users only</option>
-                        </select>
-                    </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" name="single_submission" id="id_single_submission" {% if object.single_submission %}checked{% endif %}>
-                        <label class="form-check-label" for="id_single_submission">Single submission per user</label>
-                    </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" name="allow_update" id="id_allow_update" {% if object.allow_update %}checked{% endif %}>
-                        <label class="form-check-label" for="id_allow_update">Allow users to update their submission</label>
+                        <label for="{{ form.access_level.id_for_label }}" class="form-label">Access Level *</label>
+                        {{ form.access_level }}
+                        {% if form.access_level.errors %}
+                            <div class="text-danger">{{ form.access_level.errors }}</div>
+                        {% endif %}
                     </div>
                     <div class="mb-3">
-                        <label for="id_image" class="form-label">Form Image</label>
-                        {% if object.image %}
+                        <div class="form-check">
+                            {{ form.single_submission }}
+                            <label class="form-check-label" for="{{ form.single_submission.id_for_label }}">Single submission per user</label>
+                        </div>
+                        {% if form.single_submission.errors %}
+                            <div class="text-danger">{{ form.single_submission.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {{ form.allow_update }}
+                            <label class="form-check-label" for="{{ form.allow_update.id_for_label }}">Allow users to update their submission</label>
+                        </div>
+                        {% if form.allow_update.errors %}
+                            <div class="text-danger">{{ form.allow_update.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.image.id_for_label }}" class="form-label">Form Image</label>
+                        {% if form.instance.image %}
                             <div class="mb-2">
-                                <img src="{{ object.image.url }}" alt="Current form image" class="img-thumbnail" style="max-height: 150px;">
+                                <img src="{{ form.instance.image.url }}" alt="Current form image" class="img-thumbnail" style="max-height: 150px;">
                             </div>
                         {% endif %}
-                        <input type="file" name="image" accept="image/*" class="form-control" id="id_image">
+                        {{ form.image }}
                         <div class="form-text">Upload an image for this form (optional)</div>
+                        {% if form.image.errors %}
+                            <div class="text-danger">{{ form.image.errors }}</div>
+                        {% endif %}
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Public URL</label>
@@ -80,7 +98,7 @@
                 </form>
             </div>
         </div>
-        
+
         <div class="card mt-4 border-danger">
             <div class="card-header bg-danger text-white">
                 <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Danger Zone</h5>
