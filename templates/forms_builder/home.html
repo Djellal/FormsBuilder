@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Ufas1Forms - Dynamic Form Builder{% endblock %}
 
 {% block content %}
 <div class="row mb-5">
     <div class="col-12 text-center">
-        <h1 class="display-4"><i class="bi bi-ui-checks-grid text-primary"></i> Ufas1Forms</h1>
+        <div class="d-flex flex-column align-items-center">
+            <img src="{% static 'imgs/logo-ufas-100x70.png' %}" alt="Université Ferhat Abbas Sétif 1 Logo" height="70" class="mb-3 rounded shadow-sm logo-img" style="background: white; padding: 5px; border: 1px solid #e2e8f0;">
+            <h1 class="display-4">Ufas1Forms</h1>
+        </div>
         <p class="lead text-muted">Dynamic Form Builder for Registration, Surveys, and Data Collection</p>
         <div class="mt-4">
             <a href="{% url 'login' %}" class="btn btn-primary btn-lg me-2">
@@ -29,15 +33,14 @@
     {% for form in forms %}
     <div class="col-md-4 mb-4">
         <div class="card h-100">
-            <div class="card-header">
-                <h5 class="mb-0">{{ form.title }}</h5>
-            </div>
-            <div class="card-body">
-                <p class="text-muted">{{ form.description|truncatechars:150|default:"No description available." }}</p>
-                <span class="badge bg-info">{{ form.get_form_type_display }}</span>
-            </div>
-            <div class="card-footer bg-transparent">
-                <a href="{% url 'form_submit' form.slug %}" class="btn btn-primary w-100">
+            {% if form.image %}
+                <img src="{{ form.image.url }}" class="card-img-top" alt="{{ form.title }} image" style="height: 150px; object-fit: cover;">
+            {% endif %}
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ form.title }}</h5>
+                <p class="card-text flex-grow-1">{{ form.description|truncatechars:150|default:"No description available." }}</p>
+                <span class="badge bg-info mb-2" style="align-self: start;">{{ form.get_form_type_display }}</span>
+                <a href="{% url 'form_submit' form.slug %}" class="btn btn-primary mt-auto">
                     <i class="bi bi-pencil-square"></i> Fill Form
                 </a>
             </div>

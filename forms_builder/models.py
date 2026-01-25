@@ -58,6 +58,7 @@ class Form(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_forms')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    image = models.ImageField(upload_to='form_images/', blank=True, null=True, help_text='Upload an image for this form')
 
     class Meta:
         ordering = ['-created_at']

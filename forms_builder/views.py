@@ -10,7 +10,7 @@ import csv
 import json
 
 from .models import Form, FormField, FormSubmission, FormAnswer, UploadedFile, FormStatus, FieldType, FormAccess
-from .forms import StudentRegistrationForm
+from .forms import StudentRegistrationForm, FormForm
 from academic.models import Faculte, Domaine
 from django.contrib.auth.models import Group
 from django.contrib.auth import login
@@ -89,8 +89,8 @@ class FormListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
 
 class FormCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
     model = Form
+    form_class = FormForm
     template_name = 'forms_builder/form_create.html'
-    fields = ['title', 'description', 'form_type']
     success_url = reverse_lazy('form_list')
 
     def form_valid(self, form):
@@ -102,7 +102,7 @@ class FormCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
 class FormUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
     model = Form
     template_name = 'forms_builder/form_edit.html'
-    fields = ['title', 'description', 'form_type', 'status', 'access_level', 'single_submission', 'allow_update']
+    fields = ['title', 'description', 'form_type', 'status', 'access_level', 'single_submission', 'allow_update', 'image']
     success_url = reverse_lazy('form_list')
 
     def test_func(self):
@@ -232,8 +232,32 @@ def reorder_fields(request, form_pk):
     data = json.loads(request.body)
     for i, field_id in enumerate(data.get('field_ids', [])):
         FormField.objects.filter(pk=field_id, form=form).update(order=i)
-    
+
     return JsonResponse({'success': True})
+
+
+@login_required
+def get_field(request, field_pk):
+    field = get_object_or_404(FormField, pk=field_pk)
+    if field.form.created_by != request.user and not request.user.is_staff:
+        return JsonResponse({'error': 'Access denied'}, status=403)
+
+    field_data = {
+        'id': field.id,
+        'name': field.name,
+        'label': field.label,
+        'field_type': field.field_type,
+        'is_required': field.is_required,
+        'placeholder': field.placeholder,
+        'default_value': field.default_value,
+        'options_json': field.options_json,
+        'validation_json': field.validation_json,
+        'visible_condition': field.visible_condition,
+        'enabled_condition': field.enabled_condition,
+        'parent_field_id': field.parent_field.id if field.parent_field else None,
+    }
+
+    return JsonResponse(field_data)
 
 
 def form_submit_view(request, slug):

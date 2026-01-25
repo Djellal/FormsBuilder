@@ -52,6 +52,16 @@
                         <label class="form-check-label" for="id_allow_update">Allow users to update their submission</label>
                     </div>
                     <div class="mb-3">
+                        <label for="id_image" class="form-label">Form Image</label>
+                        {% if object.image %}
+                            <div class="mb-2">
+                                <img src="{{ object.image.url }}" alt="Current form image" class="img-thumbnail" style="max-height: 150px;">
+                            </div>
+                        {% endif %}
+                        <input type="file" name="image" accept="image/*" class="form-control" id="id_image">
+                        <div class="form-text">Upload an image for this form (optional)</div>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">Public URL</label>
                         <div class="input-group">
                             <span class="input-group-text">{{ request.scheme }}://{{ request.get_host }}/f/</span>

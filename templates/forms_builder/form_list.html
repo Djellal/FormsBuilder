@@ -15,6 +15,9 @@
     {% for form in forms %}
     <div class="col-md-4 mb-4">
         <div class="card h-100">
+            {% if form.image %}
+                <img src="{{ form.image.url }}" class="card-img-top" alt="{{ form.title }} image" style="height: 150px; object-fit: cover;">
+            {% endif %}
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">{{ form.title|truncatechars:25 }}</h5>
                 {% if form.status == 'published' %}

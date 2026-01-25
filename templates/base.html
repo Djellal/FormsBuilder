@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -269,14 +270,27 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
+
+        .logo-img {
+            transition: transform 0.2s ease;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.05);
+        }
+
         @media (max-width: 768px) {
             .navbar-brand {
                 font-size: 1.2rem;
             }
-            
+
             .card-body {
                 padding: 1rem;
+            }
+
+            .logo-img {
+                max-width: 100%;
+                height: auto;
             }
         }
     </style>
@@ -285,8 +299,9 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'home' %}">
-                <i class="bi bi-ui-checks-grid"></i>Ufas1Forms
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+                <img src="{% static 'imgs/logo-ufas-100x70.png' %}" alt="Université Ferhat Abbas Sétif 1 Logo" height="40" class="me-2 rounded logo-img" style="background: white; padding: 2px;">
+                <span class="fw-bold">Ufas1Forms</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -378,8 +393,15 @@
         <div class="container-fluid px-4">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <span><i class="bi bi-ui-checks-grid me-2"></i>Ufas1Forms</span>
-                    <span class="ms-3">&copy; 2026 Université Ferhat Abbas Sétif 1</span>
+                    <div class="d-flex align-items-center">
+                        <img src="{% static 'imgs/logo-ufas-100x70.png' %}" alt="Université Ferhat Abbas Sétif 1 Logo" height="30" class="me-2 rounded logo-img" style="background: white; padding: 2px;">
+                        <div>
+                            <span class="fw-bold">Ufas1Forms</span>
+                            <div class="mt-1">
+                                <small>&copy; 2026 Université Ferhat Abbas Sétif 1</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-6 text-md-end mt-2 mt-md-0">
                     <a href="{% url 'about' %}" class="me-3"><i class="bi bi-info-circle me-1"></i>About</a>

@@ -13,6 +13,7 @@ urlpatterns = [
     path('forms/<int:pk>/builder/', views.form_builder, name='form_builder'),
     path('forms/<int:form_pk>/add-field/', views.add_field, name='add_field'),
     path('forms/<int:form_pk>/reorder-fields/', views.reorder_fields, name='reorder_fields'),
+    path('fields/<int:field_pk>/', views.get_field, name='get_field'),
     path('fields/<int:field_pk>/update/', views.update_field, name='update_field'),
     path('fields/<int:field_pk>/delete/', views.delete_field, name='delete_field'),
     path('forms/<int:form_pk>/submissions/', views.submission_list, name='submission_list'),
