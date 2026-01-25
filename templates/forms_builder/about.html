@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}About - Ufas1Forms{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-ui-checks-grid display-icon"></i>
+                <h1 class="mt-3 text-gradient">Ufas1Forms</h1>
+                <p class="lead text-muted">Dynamic Form Builder for Registration, Surveys, and Data Collection</p>
+                <div class="d-flex justify-content-center gap-2 mt-4">
+                    <a href="https://github.com/ufas1/FormsBuilder" target="_blank" class="btn btn-dark">
+                        <i class="bi bi-github me-2"></i>View on GitHub
+                    </a>
+                    <a href="{% url 'home' %}" class="btn btn-primary">
+                        <i class="bi bi-house me-2"></i>Home
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>About the Project</h5>
+            </div>
+            <div class="card-body">
+                <p>
+                    <strong>Ufas1Forms</strong> is a dynamic form builder application developed for 
+                    <strong>Université Ferhat Abbas Sétif 1</strong>. It allows administrators to create 
+                    customizable forms for various purposes including student registration, surveys, 
+                    and data collection.
+                </p>
+                <p>
+                    The application features a visual form builder, multiple field types, cascading 
+                    dropdowns, conditional field visibility, and comprehensive response management 
+                    with CSV export capabilities.
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-stars me-2"></i>Features</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Visual Form Builder</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>16 Field Types</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Cascading Dropdowns</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Conditional Fields</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>File Uploads</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Response Management</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>CSV Export</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Public & Private Forms</li>
+                            <li class="mb-0"><i class="bi bi-check-circle text-success me-2"></i>Submission Updates</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-code-slash me-2"></i>Technology Stack</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2"><i class="bi bi-filetype-py text-primary me-2"></i>Python 3.12</li>
+                            <li class="mb-2"><i class="bi bi-box text-success me-2"></i>Django 6.0</li>
+                            <li class="mb-2"><i class="bi bi-bootstrap text-purple me-2"></i>Bootstrap 5.3</li>
+                            <li class="mb-2"><i class="bi bi-database text-info me-2"></i>SQLite</li>
+                            <li class="mb-2"><i class="bi bi-filetype-js text-warning me-2"></i>JavaScript (Sortable.js)</li>
+                            <li class="mb-0"><i class="bi bi-icons text-secondary me-2"></i>Bootstrap Icons</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-github me-2"></i>Repository</h5>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h6>ufas1/FormsBuilder</h6>
+                        <p class="text-muted mb-2">Dynamic Form Builder - Django Web Application</p>
+                        <div class="d-flex gap-3">
+                            <span><i class="bi bi-star me-1"></i>Stars</span>
+                            <span><i class="bi bi-diagram-2 me-1"></i>Forks</span>
+                            <span><i class="bi bi-scale me-1"></i>MIT License</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <a href="https://github.com/ufas1/FormsBuilder" target="_blank" class="btn btn-outline-dark">
+                            <i class="bi bi-github me-2"></i>View Repository
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-people me-2"></i>Contributors</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">Development Team</h6>
+                                <small class="text-muted">Université Ferhat Abbas Sétif 1</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <p class="mb-0 text-muted">
+                    <i class="bi bi-envelope me-2"></i>Contact: <a href="mailto:contact@univ-setif.dz">contact@univ-setif.dz</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

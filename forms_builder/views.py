@@ -36,6 +36,10 @@ def home(request):
     return render(request, 'forms_builder/home.html', {'forms': public_forms})
 
 
+def about(request):
+    return render(request, 'forms_builder/about.html')
+
+
 def register(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
