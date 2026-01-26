@@ -5,3 +5,4 @@ h11==0.16.0
 sqlparse==0.5.5
 uvicorn==0.40.0
 Pillow
+psycopg2-binary

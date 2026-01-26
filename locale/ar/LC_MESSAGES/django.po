@@ -524,3 +524,6 @@ msgstr ""
 
 msgid "The application features a visual form builder, multiple field types, cascading dropdowns, conditional field visibility, and comprehensive response management with CSV export capabilities."
 msgstr "يتميز التطبيق بمنشئ نماذج مرئي وأنواع حقول متعددة وقوائم منسدلة متتالية ورؤية حقول شرطية وإدارة شاملة للردود مع إمكانيات تصدير CSV."
+
+msgid "Developer"
+msgstr "المطور"
