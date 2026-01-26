@@ -59,7 +59,7 @@ def register(request):
 @login_required
 def dashboard(request):
     if is_admin(request.user):
-        forms = Form.objects.filter(created_by=request.user).annotate(submission_count=Count('submissions'))
+        forms = Form.objects.annotate(submission_count=Count('submissions'))
         recent_submissions = FormSubmission.objects.filter(form__created_by=request.user)[:10]
         return render(request, 'forms_builder/dashboard.html', {
             'forms': forms,

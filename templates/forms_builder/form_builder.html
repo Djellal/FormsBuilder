@@ -64,7 +64,7 @@
         </div>
 
         <!-- Center Panel: Form Preview -->
-        <div class="col-md-6">
+        <div class="col-md-9">
             <div class="card shadow-sm border-0 rounded-3 h-100">
                 <div class="card-header bg-light border-bottom py-3 d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center">
@@ -112,104 +112,126 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- Right Panel: Field Properties -->
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0 rounded-3 h-100" id="field-properties-panel" style="display: none;">
-                <div class="card-header bg-light border-bottom py-3">
-                    <h5 class="mb-0"><i class="bi bi-sliders me-2 text-primary"></i> {% trans "Field Properties" %}</h5>
-                </div>
-                <div class="card-body">
-                    <form id="field-form">
-                        <input type="hidden" id="field-id">
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">{% trans "Label" %} *</label>
-                            <input type="text" class="form-control" id="field-label" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">{% trans "Name" %} *</label>
-                            <input type="text" class="form-control" id="field-name" required>
-                            <small class="text-muted">{% trans "Used for data export" %}</small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">{% trans "Type" %}</label>
-                            <select class="form-select" id="field-type">
-                                {% for type_value, type_label in field_types %}
-                                <option value="{{ type_value }}">{{ type_label }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">{% trans "Placeholder" %}</label>
-                            <input type="text" class="form-control" id="field-placeholder">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">{% trans "Default Value" %}</label>
-                            <input type="text" class="form-control" id="field-default">
-                        </div>
-
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="field-required">
-                            <label class="form-check-label fw-semibold" for="field-required">{% trans "Required" %}</label>
-                        </div>
-
-                        <div class="mb-3" id="options-container" style="display: none;">
-                            <label class="form-label fw-semibold">{% trans "Options" %}</label>
-                            <div id="options-editor">
-                                <div class="mb-2">
-                                    <div class="row g-2">
-                                        <div class="col-md-5"><small class="fw-semibold">{% trans "Value" %}</small></div>
-                                        <div class="col-md-5"><small class="fw-semibold">{% trans "Text" %}</small></div>
-                                        <div class="col-md-2"><small class="fw-semibold">{% trans "Actions" %}</small></div>
-                                    </div>
-                                </div>
-                                <div id="options-list" class="mb-2">
-                                    <!-- Options will be added here dynamically -->
-                                </div>
-                                <button type="button" class="btn btn-outline-primary btn-sm w-100 mb-2" id="add-option-btn">
-                                    <i class="bi bi-plus me-1"></i> {% trans "Add Option" %}
-                                </button>
+<!-- Field Properties Modal -->
+<div class="modal fade" id="fieldPropertiesModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="bi bi-sliders me-2"></i> {% trans "Field Properties" %}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="field-form">
+                    <input type="hidden" id="field-id">
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">{% trans "Label" %} *</label>
+                                <input type="text" class="form-control" id="field-label" required>
                             </div>
-                            <textarea class="form-control mt-2" id="field-options-json" rows="4" placeholder='[{"value":"opt1","text":"Option 1"}]' style="display: none;"></textarea>
-                            <div class="form-check mt-2">
-                                <input type="checkbox" class="form-check-input" id="toggle-json-view">
-                                <label class="form-check-label fw-semibold" for="toggle-json-view">{% trans "Edit as JSON" %}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">{% trans "Name" %} *</label>
+                                <input type="text" class="form-control" id="field-name" required>
+                                <small class="text-muted">{% trans "Used for data export" %}</small>
                             </div>
-                            <small class="text-muted d-block mt-1">{% trans "For cascading: add \"parentValue\" key" %}</small>
                         </div>
+                    </div>
 
-                        <div class="mb-3" id="parent-field-container" style="display: none;">
-                            <label class="form-label fw-semibold">{% trans "Parent Field" %}</label>
-                            <select class="form-select" id="field-parent">
-                                <option value="">{% trans "None" %}</option>
-                                {% for field in fields %}
-                                {% if field.field_type == 'select' %}
-                                <option value="{{ field.id }}">{{ field.label }}</option>
-                                {% endif %}
-                                {% endfor %}
-                            </select>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">{% trans "Type" %}</label>
+                                <select class="form-select" id="field-type">
+                                    {% for type_value, type_label in field_types %}
+                                    <option value="{{ type_value }}">{{ type_label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">{% trans "Visible Condition (JSON)" %}</label>
-                            <input type="text" class="form-control" id="field-visible-condition" placeholder='{"field_name": "value"}'>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">{% trans "Placeholder" %}</label>
+                                <input type="text" class="form-control" id="field-placeholder">
+                            </div>
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">{% trans "Enabled Condition (JSON)" %}</label>
-                            <input type="text" class="form-control" id="field-enabled-condition" placeholder='{"field_name": "value"}'>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">{% trans "Default Value" %}</label>
+                                <input type="text" class="form-control" id="field-default">
+                            </div>
                         </div>
+                    </div>
 
-                        <button type="submit" class="btn btn-primary w-100 py-2">
-                            <i class="bi bi-check-lg me-1"></i> {% trans "Save Field" %}
-                        </button>
-                    </form>
-                </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="field-required">
+                        <label class="form-check-label fw-semibold" for="field-required">{% trans "Required" %}</label>
+                    </div>
+
+                    <div class="mb-3" id="options-container" style="display: none;">
+                        <label class="form-label fw-semibold">{% trans "Options" %}</label>
+                        <div id="options-editor">
+                            <div class="mb-2">
+                                <div class="row g-2">
+                                    <div class="col-md-4"><small class="fw-semibold">{% trans "Value" %}</small></div>
+                                    <div class="col-md-4"><small class="fw-semibold">{% trans "Text" %}</small></div>
+                                    <div class="col-md-2"><small class="fw-semibold">{% trans "Parent" %}</small></div>
+                                    <div class="col-md-2"><small class="fw-semibold">{% trans "Actions" %}</small></div>
+                                </div>
+                            </div>
+                            <div id="options-list" class="mb-2" style="max-height: 200px; overflow-y: auto;">
+                                <!-- Options will be added here dynamically -->
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm w-100 mb-2" id="add-option-btn">
+                                <i class="bi bi-plus me-1"></i> {% trans "Add Option" %}
+                            </button>
+                        </div>
+                        <textarea class="form-control mt-2" id="field-options-json" rows="4" placeholder='[{"value":"opt1","text":"Option 1"}]' style="display: none;"></textarea>
+                        <div class="form-check mt-2">
+                            <input type="checkbox" class="form-check-input" id="toggle-json-view">
+                            <label class="form-check-label fw-semibold" for="toggle-json-view">{% trans "Edit as JSON" %}</label>
+                        </div>
+                        <small class="text-muted d-block mt-1">{% trans "For cascading: add \"parentValue\" key" %}</small>
+                    </div>
+
+                    <div class="mb-3" id="parent-field-container" style="display: none;">
+                        <label class="form-label fw-semibold">{% trans "Parent Field" %}</label>
+                        <select class="form-select" id="field-parent">
+                            <option value="">{% trans "None" %}</option>
+                            {% for field in fields %}
+                            {% if field.field_type == 'select' %}
+                            <option value="{{ field.id }}">{{ field.label }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">{% trans "Visible Condition (JSON)" %}</label>
+                                <input type="text" class="form-control" id="field-visible-condition" placeholder='{"field_name": "value"}'>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">{% trans "Enabled Condition (JSON)" %}</label>
+                                <input type="text" class="form-control" id="field-enabled-condition" placeholder='{"field_name": "value"}'>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                <button type="button" class="btn btn-primary" id="save-field-btn">
+                    <i class="bi bi-check-lg me-1"></i> {% trans "Save Field" %}
+                </button>
             </div>
         </div>
     </div>
@@ -458,13 +480,16 @@ document.getElementById('save-new-field').addEventListener('click', function() {
     });
 });
 
+// Field Properties Modal instance
+const fieldPropertiesModal = new bootstrap.Modal(document.getElementById('fieldPropertiesModal'));
+
 // Edit field
 document.querySelectorAll('.edit-field-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         const fieldId = this.dataset.fieldId;
-        const panel = document.getElementById('field-properties-panel');
-        panel.style.display = 'block';
-        panel.classList.add('fade-in');
+        
+        // Show the modal
+        fieldPropertiesModal.show();
 
         // Fetch field data from API
         fetch(`/fields/${fieldId}/`)
@@ -671,9 +696,8 @@ function populateOptionsEditor(optionsArray) {
     }
 }
 
-// Save field form
-document.getElementById('field-form').addEventListener('submit', function(e) {
-    e.preventDefault();
+// Save field button
+document.getElementById('save-field-btn').addEventListener('click', function() {
     const fieldId = document.getElementById('field-id').value;
 
     let options = [];
