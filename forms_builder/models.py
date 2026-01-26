@@ -38,6 +38,8 @@ class FieldType(models.TextChoices):
     FILE = 'file', 'File'
     SELECT_FACULTE = 'select_faculte', 'Select Faculte'
     SELECT_DOMAINE = 'select_domaine', 'Select Domaine'
+    SELECT_SPECIALITE = 'select_specialite', 'Select Specialite'
+    SELECT_ETABLISSEMENT = 'select_etablissement', 'Select Etablissement'
 
 
 class SubmissionStatus(models.TextChoices):

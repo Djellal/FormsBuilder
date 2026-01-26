@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}My Dashboard - Ufas1Forms{% endblock %}
+{% block title %}{% trans "My Dashboard" %} - Ufas1Forms{% endblock %}
 
 {% block content %}
 <div class="row mb-4">
     <div class="col-12">
-        <h2><i class="bi bi-person-circle"></i> My Dashboard</h2>
-        <p class="text-muted">Welcome, {{ user.first_name|default:user.username }}!</p>
+        <h2><i class="bi bi-person-circle"></i> {% trans "My Dashboard" %}</h2>
+        <p class="text-muted">{% trans "Welcome" %}, {{ user.first_name|default:user.username }}!</p>
     </div>
 </div>
 
@@ -14,7 +15,7 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-inbox"></i> My Submissions</h5>
+                <h5 class="mb-0"><i class="bi bi-inbox"></i> {% trans "My Submissions" %}</h5>
             </div>
             <div class="card-body">
                 {% if submissions %}
@@ -22,10 +23,10 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Form</th>
-                                <th>Submitted At</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th>{% trans "Form" %}</th>
+                                <th>{% trans "Submitted At" %}</th>
+                                <th>{% trans "Status" %}</th>
+                                <th>{% trans "Actions" %}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -35,20 +36,20 @@
                                 <td>{{ sub.submitted_at|date:"M d, Y H:i" }}</td>
                                 <td>
                                     {% if sub.status == 'pending' %}
-                                    <span class="badge bg-warning text-dark">Pending</span>
+                                    <span class="badge bg-warning text-dark">{% trans "Pending" %}</span>
                                     {% elif sub.status == 'approved' %}
-                                    <span class="badge bg-success">Approved</span>
+                                    <span class="badge bg-success">{% trans "Approved" %}</span>
                                     {% else %}
-                                    <span class="badge bg-danger">Rejected</span>
+                                    <span class="badge bg-danger">{% trans "Rejected" %}</span>
                                     {% endif %}
                                 </td>
                                 <td>
                                     <a href="{% url 'my_submission' sub.form.slug %}" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-eye"></i> View
+                                        <i class="bi bi-eye"></i> {% trans "View" %}
                                     </a>
                                     {% if sub.form.allow_update %}
                                     <a href="{% url 'form_submit' sub.form.slug %}" class="btn btn-sm btn-outline-secondary">
-                                        <i class="bi bi-pencil"></i> Edit
+                                        <i class="bi bi-pencil"></i> {% trans "Edit" %}
                                     </a>
                                     {% endif %}
                                 </td>
@@ -60,8 +61,8 @@
                 {% else %}
                 <div class="text-center py-5">
                     <i class="bi bi-inbox display-1 text-muted"></i>
-                    <h4 class="mt-3">No submissions yet</h4>
-                    <p class="text-muted">You haven't submitted any forms yet.</p>
+                    <h4 class="mt-3">{% trans "No submissions yet" %}</h4>
+                    <p class="text-muted">{% trans "You haven't submitted any forms yet." %}</p>
                 </div>
                 {% endif %}
             </div>
@@ -71,7 +72,7 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-collection"></i> Available Forms</h5>
+                <h5 class="mb-0"><i class="bi bi-collection"></i> {% trans "Available Forms" %}</h5>
             </div>
             <div class="card-body">
                 {% if available_forms %}
@@ -87,7 +88,7 @@
                     {% endfor %}
                 </div>
                 {% else %}
-                <p class="text-muted text-center py-3 mb-0">No forms available at the moment.</p>
+                <p class="text-muted text-center py-3 mb-0">{% trans "No forms available at the moment." %}</p>
                 {% endif %}
             </div>
         </div>

@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}My Forms - Ufas1Forms{% endblock %}
+{% block title %}{% trans "My Forms" %} - Ufas1Forms{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="bi bi-collection"></i> My Forms</h2>
+    <h2><i class="bi bi-collection"></i> {% trans "My Forms" %}</h2>
     <a href="{% url 'form_create' %}" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Create New Form
+        <i class="bi bi-plus-circle"></i> {% trans "Create New Form" %}
     </a>
 </div>
 
@@ -21,37 +22,37 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">{{ form.title|truncatechars:25 }}</h5>
                 {% if form.status == 'published' %}
-                <span class="badge bg-success">Published</span>
+                <span class="badge bg-success">{% trans "Published" %}</span>
                 {% elif form.status == 'draft' %}
-                <span class="badge bg-warning text-dark">Draft</span>
+                <span class="badge bg-warning text-dark">{% trans "Draft" %}</span>
                 {% else %}
-                <span class="badge bg-secondary">Archived</span>
+                <span class="badge bg-secondary">{% trans "Archived" %}</span>
                 {% endif %}
             </div>
             <div class="card-body">
-                <p class="text-muted">{{ form.description|truncatechars:100|default:"No description" }}</p>
+                <p class="text-muted">{{ form.description|truncatechars:100|default:_("No description") }}</p>
                 <div class="d-flex gap-2 mb-3">
                     <span class="badge bg-info">{{ form.get_form_type_display }}</span>
-                    <span class="badge bg-secondary">{{ form.fields.count }} fields</span>
-                    <span class="badge bg-primary">{{ form.submission_count }} submissions</span>
+                    <span class="badge bg-secondary">{{ form.fields.count }} {% trans "fields" %}</span>
+                    <span class="badge bg-primary">{{ form.submission_count }} {% trans "submissions" %}</span>
                 </div>
             </div>
             <div class="card-footer bg-transparent">
                 <div class="btn-group w-100">
-                    <a href="{% url 'form_builder' form.pk %}" class="btn btn-outline-primary" title="Form Builder">
-                        <i class="bi bi-tools"></i> Builder
+                    <a href="{% url 'form_builder' form.pk %}" class="btn btn-outline-primary" title="{% trans "Form Builder" %}">
+                        <i class="bi bi-tools"></i> {% trans "Builder" %}
                     </a>
-                    <a href="{% url 'form_edit' form.pk %}" class="btn btn-outline-secondary" title="Edit">
-                        <i class="bi bi-pencil"></i> Edit
+                    <a href="{% url 'form_edit' form.pk %}" class="btn btn-outline-secondary" title="{% trans "Edit" %}">
+                        <i class="bi bi-pencil"></i> {% trans "Edit" %}
                     </a>
-                    <a href="{% url 'submission_list' form.pk %}" class="btn btn-outline-info" title="Submissions">
-                        <i class="bi bi-inbox"></i> Data
+                    <a href="{% url 'submission_list' form.pk %}" class="btn btn-outline-info" title="{% trans "Submissions" %}">
+                        <i class="bi bi-inbox"></i> {% trans "Data" %}
                     </a>
                 </div>
                 <div class="mt-2">
                     {% if form.status == 'published' %}
                     <a href="{% url 'form_submit' form.slug %}" class="btn btn-success btn-sm w-100" target="_blank">
-                        <i class="bi bi-eye"></i> View Public Form
+                        <i class="bi bi-eye"></i> {% trans "View Public Form" %}
                     </a>
                     {% endif %}
                 </div>
@@ -63,10 +64,10 @@
 {% else %}
 <div class="text-center py-5">
     <i class="bi bi-inbox display-1 text-muted"></i>
-    <h4 class="mt-3">No forms yet</h4>
-    <p class="text-muted">Create your first dynamic form to get started.</p>
+    <h4 class="mt-3">{% trans "No forms yet" %}</h4>
+    <p class="text-muted">{% trans "Create your first dynamic form to get started." %}</p>
     <a href="{% url 'form_create' %}" class="btn btn-primary btn-lg">
-        <i class="bi bi-plus-circle"></i> Create Form
+        <i class="bi bi-plus-circle"></i> {% trans "Create Form" %}
     </a>
 </div>
 {% endif %}

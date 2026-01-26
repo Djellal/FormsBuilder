@@ -34,3 +34,14 @@ class Domaine(models.Model):
 
     def __str__(self):
         return f"{self.nom} ({self.faculte.nom})"
+
+
+class Specialite(models.Model):
+    nom = models.CharField(max_length=255)
+    domaine = models.ForeignKey(Domaine, on_delete=models.CASCADE, related_name='specialites')
+
+    class Meta:
+        ordering = ['nom']
+
+    def __str__(self):
+        return f"{self.nom} ({self.domaine.nom})"

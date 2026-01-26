@@ -1,6 +1,7 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_CODE == 'ar' %}rtl{% else %}ltr{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -293,6 +294,50 @@
                 height: auto;
             }
         }
+
+        /* RTL Support for Arabic */
+        html[dir="rtl"] {
+            text-align: right;
+        }
+
+        html[dir="rtl"] .me-1 {
+            margin-right: 0 !important;
+            margin-left: 0.25rem !important;
+        }
+
+        html[dir="rtl"] .me-2 {
+            margin-right: 0 !important;
+            margin-left: 0.5rem !important;
+        }
+
+        html[dir="rtl"] .me-3 {
+            margin-right: 0 !important;
+            margin-left: 1rem !important;
+        }
+
+        html[dir="rtl"] .ms-auto {
+            margin-left: 0 !important;
+            margin-right: auto !important;
+        }
+
+        html[dir="rtl"] .me-auto {
+            margin-right: 0 !important;
+            margin-left: auto !important;
+        }
+
+        html[dir="rtl"] .text-md-end {
+            text-align: left !important;
+        }
+
+        html[dir="rtl"] .dropdown-menu-end {
+            right: auto;
+            left: 0;
+        }
+
+        html[dir="rtl"] .navbar-brand i {
+            margin-right: 0;
+            margin-left: 0.5rem;
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -300,7 +345,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
-                <img src="{% static 'imgs/logo-ufas-100x70.png' %}" alt="Université Ferhat Abbas Sétif 1 Logo" height="40" class="me-2 rounded logo-img" style="background: white; padding: 2px;">
+                <img src="/media/logo-ufas.png" alt="Université Ferhat Abbas Sétif 1 Logo" height="40" class="me-2 rounded logo-img" style="background: white; padding: 2px;">
                 <span class="fw-bold">Ufas1Forms</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -311,18 +356,18 @@
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'dashboard' %}">
-                            <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                            <i class="bi bi-speedometer2 me-1"></i>{% trans "Dashboard" %}
                         </a>
                     </li>
                     {% if is_form_admin %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'form_list' %}">
-                            <i class="bi bi-collection me-1"></i>My Forms
+                            <i class="bi bi-collection me-1"></i>{% trans "My Forms" %}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'form_create' %}">
-                            <i class="bi bi-plus-circle me-1"></i>Create Form
+                            <i class="bi bi-plus-circle me-1"></i>{% trans "Create Form" %}
                         </a>
                     </li>
                     {% endif %}
@@ -336,7 +381,7 @@
                             {% if user.is_staff %}
                             <li>
                                 <a class="dropdown-item" href="{% url 'admin:index' %}">
-                                    <i class="bi bi-gear me-2"></i>Admin Panel
+                                    <i class="bi bi-gear me-2"></i>{% trans "Admin Panel" %}
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>
@@ -345,8 +390,36 @@
                                 <form method="post" action="{% url 'logout' %}" class="d-inline w-100">
                                     {% csrf_token %}
                                     <button type="submit" class="dropdown-item text-danger">
-                                        <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                        <i class="bi bi-box-arrow-right me-2"></i>{% trans "Logout" %}
                                     </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-globe me-1"></i>{% trans "Language" %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <form action="{% url 'set_language' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button type="submit" name="language" value="en" class="dropdown-item {% if LANGUAGE_CODE == 'en' %}active{% endif %}">English</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form action="{% url 'set_language' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button type="submit" name="language" value="fr" class="dropdown-item {% if LANGUAGE_CODE == 'fr' %}active{% endif %}">Français</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form action="{% url 'set_language' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button type="submit" name="language" value="ar" class="dropdown-item {% if LANGUAGE_CODE == 'ar' %}active{% endif %}">العربية</button>
                                 </form>
                             </li>
                         </ul>
@@ -354,14 +427,42 @@
                 </ul>
                 {% else %}
                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-globe me-1"></i>{% trans "Language" %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <form action="{% url 'set_language' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button type="submit" name="language" value="en" class="dropdown-item {% if LANGUAGE_CODE == 'en' %}active{% endif %}">English</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form action="{% url 'set_language' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button type="submit" name="language" value="fr" class="dropdown-item {% if LANGUAGE_CODE == 'fr' %}active{% endif %}">Français</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form action="{% url 'set_language' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button type="submit" name="language" value="ar" class="dropdown-item {% if LANGUAGE_CODE == 'ar' %}active{% endif %}">العربية</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'login' %}">
-                            <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                            <i class="bi bi-box-arrow-in-right me-1"></i>{% trans "Login" %}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'register' %}">
-                            <i class="bi bi-person-plus me-1"></i>Register
+                            <i class="bi bi-person-plus me-1"></i>{% trans "Register" %}
                         </a>
                     </li>
                 </ul>
@@ -394,7 +495,7 @@
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <div class="d-flex align-items-center">
-                        <img src="{% static 'imgs/logo-ufas-100x70.png' %}" alt="Université Ferhat Abbas Sétif 1 Logo" height="30" class="me-2 rounded logo-img" style="background: white; padding: 2px;">
+                        <img src="/media/logo-ufas.png" alt="Université Ferhat Abbas Sétif 1 Logo" height="30" class="me-2 rounded logo-img" style="background: white; padding: 2px;">
                         <div>
                             <span class="fw-bold">Ufas1Forms</span>
                             <div class="mt-1">
@@ -404,9 +505,9 @@
                     </div>
                 </div>
                 <div class="col-md-6 text-md-end mt-2 mt-md-0">
-                    <a href="{% url 'about' %}" class="me-3"><i class="bi bi-info-circle me-1"></i>About</a>
-                    <a href="https://github.com/ufas1/FormsBuilder" target="_blank" class="me-3"><i class="bi bi-github me-1"></i>GitHub</a>
-                    <a href="mailto:contact@univ-setif.dz"><i class="bi bi-envelope me-1"></i>Contact</a>
+                    <a href="{% url 'about' %}" class="me-3"><i class="bi bi-info-circle me-1"></i>{% trans "About" %}</a>
+                    <a href="https://github.com/ufas1/FormsBuilder" target="_blank" class="me-3"><i class="bi bi-github me-1"></i>{% trans "GitHub" %}</a>
+                    <a href="mailto:contact@univ-setif.dz"><i class="bi bi-envelope me-1"></i>{% trans "Contact" %}</a>
                 </div>
             </div>
         </div>

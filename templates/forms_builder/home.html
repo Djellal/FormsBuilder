@@ -1,59 +1,81 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Ufas1Forms - Dynamic Form Builder{% endblock %}
+{% block title %}{% trans "Ufas1Forms - Dynamic Form Builder" %}{% endblock %}
 
 {% block content %}
-<div class="row mb-5">
-    <div class="col-12 text-center">
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="text-center mb-5">
         <div class="d-flex flex-column align-items-center">
-            <img src="{% static 'imgs/logo-ufas-100x70.png' %}" alt="Université Ferhat Abbas Sétif 1 Logo" height="70" class="mb-3 rounded shadow-sm logo-img" style="background: white; padding: 5px; border: 1px solid #e2e8f0;">
-            <h1 class="display-4">Ufas1Forms</h1>
+            <img src="/media/logo-ufas.png" alt="Université Ferhat Abbas Sétif 1 Logo" height="80" class="mb-4 rounded shadow logo-img" style="background: white; padding: 8px; border: 2px solid #e2e8f0;">
+            <h1 class="display-4 fw-bold text-primary">{% trans "Ufas1Forms" %}</h1>
         </div>
-        <p class="lead text-muted">Dynamic Form Builder for Registration, Surveys, and Data Collection</p>
+        <p class="lead text-muted mt-3">{% trans "Dynamic Form Builder for Registration, Surveys, and Data Collection" %}</p>
         <div class="mt-4">
-            <a href="{% url 'login' %}" class="btn btn-primary btn-lg me-2">
-                <i class="bi bi-box-arrow-in-right"></i> Login
+            <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-4 me-2 shadow-sm">
+                <i class="bi bi-box-arrow-in-right"></i> {% trans "Login" %}
             </a>
-            <a href="{% url 'register' %}" class="btn btn-outline-primary btn-lg">
-                <i class="bi bi-person-plus"></i> Register
+            <a href="{% url 'register' %}" class="btn btn-outline-primary btn-lg px-4 shadow-sm">
+                <i class="bi bi-person-plus"></i> {% trans "Register" %}
             </a>
         </div>
     </div>
-</div>
 
-{% if forms %}
-<div class="row">
-    <div class="col-12">
-        <h3 class="mb-4"><i class="bi bi-collection"></i> Available Public Forms</h3>
+    <!-- Forms Section -->
+    {% if forms %}
+    <div class="text-center mb-4">
+        <h3 class="fw-semibold"><i class="bi bi-collection me-2"></i>{% trans "Available Forms" %}</h3>
+        <p class="text-muted">{% trans "Browse and fill out the forms below" %}</p>
     </div>
-</div>
 
-<div class="row">
-    {% for form in forms %}
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            {% if form.image %}
-                <img src="{{ form.image.url }}" class="card-img-top" alt="{{ form.title }} image" style="height: 150px; object-fit: cover;">
-            {% endif %}
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title">{{ form.title }}</h5>
-                <p class="card-text flex-grow-1">{{ form.description|truncatechars:150|default:"No description available." }}</p>
-                <span class="badge bg-info mb-2" style="align-self: start;">{{ form.get_form_type_display }}</span>
-                <a href="{% url 'form_submit' form.slug %}" class="btn btn-primary mt-auto">
-                    <i class="bi bi-pencil-square"></i> Fill Form
-                </a>
+    <div class="row justify-content-center g-4">
+        {% for form in forms %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
+                {% if form.image %}
+                    <img src="{{ form.image.url }}" class="card-img-top" alt="{{ form.title }} image" style="height: 160px; object-fit: cover;">
+                {% else %}
+                    <div class="card-img-top bg-gradient d-flex align-items-center justify-content-center" style="height: 160px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="bi bi-file-earmark-text text-white" style="font-size: 3rem; opacity: 0.8;"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body d-flex flex-column p-4">
+                    <h5 class="card-title fw-bold mb-2">{{ form.title }}</h5>
+                    {% with default_desc=_("No description available.") %}
+                    <p class="card-text text-muted flex-grow-1 mb-3">{{ form.description|truncatechars:120|default:default_desc }}</p>
+                    {% endwith %}
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-info rounded-pill px-3 py-2">
+                            <i class="bi bi-tag me-1"></i>{{ form.get_form_type_display }}
+                        </span>
+                        {% if form.access_level == 'authenticated' %}
+                        <span class="badge bg-warning text-dark rounded-pill px-3 py-2">
+                            <i class="bi bi-lock me-1"></i>{% trans "Login Required" %}
+                        </span>
+                        {% else %}
+                        <span class="badge bg-success rounded-pill px-3 py-2">
+                            <i class="bi bi-unlock me-1"></i>{% trans "Public" %}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'form_submit' form.slug %}" class="btn btn-primary w-100 rounded-pill">
+                        <i class="bi bi-pencil-square me-1"></i> {% trans "Fill Form" %}
+                    </a>
+                </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
-{% else %}
-<div class="row">
-    <div class="col-12 text-center py-5">
-        <i class="bi bi-inbox display-1 text-muted"></i>
-        <p class="mt-3 text-muted">No public forms available at the moment.</p>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+        </div>
+        <h4 class="text-muted">{% trans "No forms available at the moment" %}</h4>
+        <p class="text-muted">{% trans "Please check back later for new forms." %}</p>
     </div>
+    {% endif %}
 </div>
-{% endif %}
 {% endblock %}

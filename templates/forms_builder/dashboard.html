@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Dashboard - Ufas1Forms{% endblock %}
+{% block title %}{% trans "Dashboard" %} - Ufas1Forms{% endblock %}
 
 {% block content %}
 <div class="row mb-4">
     <div class="col-12">
-        <h2><i class="bi bi-speedometer2"></i> Dashboard</h2>
+        <h2><i class="bi bi-speedometer2"></i> {% trans "Dashboard" %}</h2>
     </div>
 </div>
 
@@ -13,7 +14,7 @@
     <div class="col-md-4">
         <div class="card bg-primary text-white">
             <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-collection"></i> Total Forms</h5>
+                <h5 class="card-title"><i class="bi bi-collection"></i> {% trans "Total Forms" %}</h5>
                 <h2>{{ forms.count }}</h2>
             </div>
         </div>
@@ -21,7 +22,7 @@
     <div class="col-md-4">
         <div class="card bg-success text-white">
             <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-check-circle"></i> Published Forms</h5>
+                <h5 class="card-title"><i class="bi bi-check-circle"></i> {% trans "Published Forms" %}</h5>
                 <h2>{{ forms|dictsort:"status"|length }}</h2>
             </div>
         </div>
@@ -29,7 +30,7 @@
     <div class="col-md-4">
         <div class="card bg-info text-white">
             <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-inbox"></i> Total Submissions</h5>
+                <h5 class="card-title"><i class="bi bi-inbox"></i> {% trans "Total Submissions" %}</h5>
                 <h2>{{ recent_submissions.count }}</h2>
             </div>
         </div>
@@ -40,9 +41,9 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="bi bi-collection"></i> My Forms</h5>
+                <h5 class="mb-0"><i class="bi bi-collection"></i> {% trans "My Forms" %}</h5>
                 <a href="{% url 'form_create' %}" class="btn btn-sm btn-primary">
-                    <i class="bi bi-plus"></i> New Form
+                    <i class="bi bi-plus"></i> {% trans "New Form" %}
                 </a>
             </div>
             <div class="card-body">
@@ -51,11 +52,11 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Title</th>
-                                <th>Type</th>
-                                <th>Status</th>
-                                <th>Submissions</th>
-                                <th>Actions</th>
+                                <th>{% trans "Title" %}</th>
+                                <th>{% trans "Type" %}</th>
+                                <th>{% trans "Status" %}</th>
+                                <th>{% trans "Submissions" %}</th>
+                                <th>{% trans "Actions" %}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -65,23 +66,23 @@
                                 <td><span class="badge bg-secondary">{{ form.get_form_type_display }}</span></td>
                                 <td>
                                     {% if form.status == 'published' %}
-                                    <span class="badge bg-success">Published</span>
+                                    <span class="badge bg-success">{% trans "Published" %}</span>
                                     {% elif form.status == 'draft' %}
-                                    <span class="badge bg-warning">Draft</span>
+                                    <span class="badge bg-warning">{% trans "Draft" %}</span>
                                     {% else %}
-                                    <span class="badge bg-secondary">Archived</span>
+                                    <span class="badge bg-secondary">{% trans "Archived" %}</span>
                                     {% endif %}
                                 </td>
                                 <td>{{ form.submission_count }}</td>
                                 <td>
-                                    <a href="{% url 'form_builder' form.pk %}" class="btn btn-sm btn-outline-primary" title="Builder">
+                                    <a href="{% url 'form_builder' form.pk %}" class="btn btn-sm btn-outline-primary" title="{% trans "Builder" %}">
                                         <i class="bi bi-tools"></i>
                                     </a>
-                                    <a href="{% url 'submission_list' form.pk %}" class="btn btn-sm btn-outline-info" title="Submissions">
+                                    <a href="{% url 'submission_list' form.pk %}" class="btn btn-sm btn-outline-info" title="{% trans "Submissions" %}">
                                         <i class="bi bi-inbox"></i>
                                     </a>
                                     {% if form.status == 'published' %}
-                                    <a href="{% url 'form_submit' form.slug %}" class="btn btn-sm btn-outline-success" title="View Form" target="_blank">
+                                    <a href="{% url 'form_submit' form.slug %}" class="btn btn-sm btn-outline-success" title="{% trans "View Form" %}" target="_blank">
                                         <i class="bi bi-eye"></i>
                                     </a>
                                     {% endif %}
@@ -92,7 +93,7 @@
                     </table>
                 </div>
                 {% else %}
-                <p class="text-muted text-center py-4">No forms yet. <a href="{% url 'form_create' %}">Create your first form</a></p>
+                <p class="text-muted text-center py-4">{% trans "No forms yet." %} <a href="{% url 'form_create' %}">{% trans "Create your first form" %}</a></p>
                 {% endif %}
             </div>
         </div>
@@ -101,7 +102,7 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Submissions</h5>
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> {% trans "Recent Submissions" %}</h5>
             </div>
             <div class="card-body">
                 {% if recent_submissions %}
@@ -119,7 +120,7 @@
                     {% endfor %}
                 </ul>
                 {% else %}
-                <p class="text-muted text-center py-3">No submissions yet.</p>
+                <p class="text-muted text-center py-3">{% trans "No submissions yet." %}</p>
                 {% endif %}
             </div>
         </div>

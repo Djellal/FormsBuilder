@@ -1,21 +1,22 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Submission #{{ submission.id }}{% endblock %}
+{% block title %}{% trans "Submission" %} #{{ submission.id }}{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-md-8">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'form_list' %}">Forms</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'form_list' %}">{% trans "Forms" %}</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'submission_list' submission.form.pk %}">{{ submission.form.title }}</a></li>
-                <li class="breadcrumb-item active">Submission #{{ submission.id }}</li>
+                <li class="breadcrumb-item active">{% trans "Submission" %} #{{ submission.id }}</li>
             </ol>
         </nav>
         
         <div class="card">
             <div class="card-header">
-                <h4 class="mb-0"><i class="bi bi-file-text"></i> Submission Details</h4>
+                <h4 class="mb-0"><i class="bi bi-file-text"></i> {% trans "Submission Details" %}</h4>
             </div>
             <div class="card-body">
                 <table class="table">
@@ -27,10 +28,10 @@
                                 {% if answer.field.field_type == 'file' %}
                                     {% if answer.value_text %}
                                     <a href="/media/uploads/{{ answer.value_text }}" target="_blank">
-                                        <i class="bi bi-file-earmark"></i> Download File
+                                        <i class="bi bi-file-earmark"></i> {% trans "Download File" %}
                                     </a>
                                     {% else %}
-                                    <span class="text-muted">No file</span>
+                                    <span class="text-muted">{% trans "No file" %}</span>
                                     {% endif %}
                                 {% else %}
                                     {{ answer.value_text|default:"-"|linebreaksbr }}
@@ -46,7 +47,7 @@
         {% if files %}
         <div class="card mt-4">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-paperclip"></i> Uploaded Files</h5>
+                <h5 class="mb-0"><i class="bi bi-paperclip"></i> {% trans "Uploaded Files" %}</h5>
             </div>
             <ul class="list-group list-group-flush">
                 {% for file in files %}
@@ -56,7 +57,7 @@
                         <small class="text-muted">({{ file.size_bytes|filesizeformat }})</small>
                     </div>
                     <a href="/media/uploads/{{ file.stored_filename }}" class="btn btn-sm btn-outline-primary" target="_blank">
-                        <i class="bi bi-download"></i> Download
+                        <i class="bi bi-download"></i> {% trans "Download" %}
                     </a>
                 </li>
                 {% endfor %}
@@ -68,29 +69,29 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Metadata</h5>
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> {% trans "Metadata" %}</h5>
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
-                    <strong>Submitted:</strong><br>
+                    <strong>{% trans "Submitted:" %}</strong><br>
                     {{ submission.submitted_at|date:"M d, Y H:i:s" }}
                 </li>
                 <li class="list-group-item">
-                    <strong>By:</strong><br>
-                    {{ submission.submitted_by.username|default:"Anonymous" }}
+                    <strong>{% trans "By:" %}</strong><br>
+                    {{ submission.submitted_by.username|default:_("Anonymous") }}
                 </li>
                 <li class="list-group-item">
-                    <strong>IP Address:</strong><br>
+                    <strong>{% trans "IP Address:" %}</strong><br>
                     {{ submission.ip_address|default:"-" }}
                 </li>
                 <li class="list-group-item">
-                    <strong>Status:</strong><br>
+                    <strong>{% trans "Status:" %}</strong><br>
                     {% if submission.status == 'pending' %}
-                    <span class="badge bg-warning text-dark">Pending</span>
+                    <span class="badge bg-warning text-dark">{% trans "Pending" %}</span>
                     {% elif submission.status == 'approved' %}
-                    <span class="badge bg-success">Approved</span>
+                    <span class="badge bg-success">{% trans "Approved" %}</span>
                     {% else %}
-                    <span class="badge bg-danger">Rejected</span>
+                    <span class="badge bg-danger">{% trans "Rejected" %}</span>
                     {% endif %}
                 </li>
             </ul>
@@ -98,7 +99,7 @@
         
         <div class="d-grid gap-2 mt-3">
             <a href="{% url 'submission_list' submission.form.pk %}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Back to Submissions
+                <i class="bi bi-arrow-left"></i> {% trans "Back to Submissions" %}
             </a>
         </div>
     </div>

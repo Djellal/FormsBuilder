@@ -1,0 +1,526 @@
+# Arabic translations for Ufas1Forms
+# Copyright (C) 2026 Université Ferhat Abbas Sétif 1
+msgid ""
+msgstr ""
+"Project-Id-Version: Ufas1Forms 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-26 11:22+0000\n"
+"PO-Revision-Date: 2026-01-26 11:22+0000\n"
+"Last-Translator: Ufas1Forms Team\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+msgid "Dashboard"
+msgstr "لوحة التحكم"
+
+msgid "My Forms"
+msgstr "نماذجي"
+
+msgid "Create Form"
+msgstr "إنشاء نموذج"
+
+msgid "Admin Panel"
+msgstr "لوحة الإدارة"
+
+msgid "Logout"
+msgstr "تسجيل الخروج"
+
+msgid "Language"
+msgstr "اللغة"
+
+msgid "Login"
+msgstr "تسجيل الدخول"
+
+msgid "Register"
+msgstr "التسجيل"
+
+msgid "About"
+msgstr "حول"
+
+msgid "GitHub"
+msgstr "GitHub"
+
+msgid "Contact"
+msgstr "اتصل بنا"
+
+msgid "Dynamic Form Builder for Registration, Surveys, and Data Collection"
+msgstr "منشئ النماذج الديناميكي للتسجيل والاستبيانات وجمع البيانات"
+
+msgid "View on GitHub"
+msgstr "عرض على GitHub"
+
+msgid "Home"
+msgstr "الرئيسية"
+
+msgid "About the Project"
+msgstr "حول المشروع"
+
+msgid "Features"
+msgstr "الميزات"
+
+msgid "Visual Form Builder"
+msgstr "منشئ النماذج المرئي"
+
+msgid "16 Field Types"
+msgstr "16 نوع من الحقول"
+
+msgid "Cascading Dropdowns"
+msgstr "قوائم منسدلة متتالية"
+
+msgid "Conditional Fields"
+msgstr "حقول شرطية"
+
+msgid "File Uploads"
+msgstr "رفع الملفات"
+
+msgid "Response Management"
+msgstr "إدارة الردود"
+
+msgid "CSV Export"
+msgstr "تصدير CSV"
+
+msgid "Public & Private Forms"
+msgstr "نماذج عامة وخاصة"
+
+msgid "Submission Updates"
+msgstr "تحديثات الإرسال"
+
+msgid "Technology Stack"
+msgstr "المكدس التقني"
+
+msgid "Repository"
+msgstr "المستودع"
+
+msgid "Dynamic Form Builder - Django Web Application"
+msgstr "منشئ النماذج الديناميكي - تطبيق ويب Django"
+
+msgid "Stars"
+msgstr "النجوم"
+
+msgid "Forks"
+msgstr "التفرعات"
+
+msgid "MIT License"
+msgstr "رخصة MIT"
+
+msgid "View Repository"
+msgstr "عرض المستودع"
+
+msgid "Contributors"
+msgstr "المساهمون"
+
+msgid "Development Team"
+msgstr "فريق التطوير"
+
+msgid "Contact:"
+msgstr "الاتصال:"
+
+msgid "Total Forms"
+msgstr "إجمالي النماذج"
+
+msgid "Published Forms"
+msgstr "النماذج المنشورة"
+
+msgid "Total Submissions"
+msgstr "إجمالي الإرسالات"
+
+msgid "New Form"
+msgstr "نموذج جديد"
+
+msgid "Title"
+msgstr "العنوان"
+
+msgid "Type"
+msgstr "النوع"
+
+msgid "Status"
+msgstr "الحالة"
+
+msgid "Submissions"
+msgstr "الإرسالات"
+
+msgid "Actions"
+msgstr "الإجراءات"
+
+msgid "Published"
+msgstr "منشور"
+
+msgid "Draft"
+msgstr "مسودة"
+
+msgid "Archived"
+msgstr "مؤرشف"
+
+msgid "Builder"
+msgstr "المنشئ"
+
+msgid "View Form"
+msgstr "عرض النموذج"
+
+msgid "Recent Submissions"
+msgstr "الإرسالات الأخيرة"
+
+msgid "No forms yet"
+msgstr "لا توجد نماذج بعد"
+
+msgid "Create your first form to get started."
+msgstr "أنشئ نموذجك الأول للبدء."
+
+msgid "Edit Form"
+msgstr "تعديل النموذج"
+
+msgid "Description"
+msgstr "الوصف"
+
+msgid "Form Type"
+msgstr "نوع النموذج"
+
+msgid "Access Level"
+msgstr "مستوى الوصول"
+
+msgid "Single Submission"
+msgstr "إرسال واحد"
+
+msgid "Allow Update"
+msgstr "السماح بالتحديث"
+
+msgid "Image"
+msgstr "الصورة"
+
+msgid "Save Changes"
+msgstr "حفظ التغييرات"
+
+msgid "Cancel"
+msgstr "إلغاء"
+
+msgid "Delete Form"
+msgstr "حذف النموذج"
+
+msgid "Are you sure you want to delete this form?"
+msgstr "هل أنت متأكد أنك تريد حذف هذا النموذج؟"
+
+msgid "This action cannot be undone."
+msgstr "لا يمكن التراجع عن هذا الإجراء."
+
+msgid "Yes, Delete"
+msgstr "نعم، احذف"
+
+msgid "Form Builder"
+msgstr "منشئ النماذج"
+
+msgid "Add Field"
+msgstr "إضافة حقل"
+
+msgid "Field Type"
+msgstr "نوع الحقل"
+
+msgid "Label"
+msgstr "التسمية"
+
+msgid "Name"
+msgstr "الاسم"
+
+msgid "Placeholder"
+msgstr "نص توضيحي"
+
+msgid "Default Value"
+msgstr "القيمة الافتراضية"
+
+msgid "Options"
+msgstr "الخيارات"
+
+msgid "Required"
+msgstr "مطلوب"
+
+msgid "Save Field"
+msgstr "حفظ الحقل"
+
+msgid "Edit Field"
+msgstr "تعديل الحقل"
+
+msgid "Delete Field"
+msgstr "حذف الحقل"
+
+msgid "No fields yet"
+msgstr "لا توجد حقول بعد"
+
+msgid "Add fields to your form using the button above."
+msgstr "أضف حقولاً إلى نموذجك باستخدام الزر أعلاه."
+
+msgid "Form Preview"
+msgstr "معاينة النموذج"
+
+msgid "Submit"
+msgstr "إرسال"
+
+msgid "Updating your submission"
+msgstr "جاري تحديث إرسالك"
+
+msgid "Select..."
+msgstr "اختر..."
+
+msgid "Select an option"
+msgstr "اختر خياراً"
+
+msgid "Success"
+msgstr "نجاح"
+
+msgid "Thank You!"
+msgstr "شكراً لك!"
+
+#, python-format
+msgid "Your response to <strong>%(title)s</strong> has been submitted successfully."
+msgstr "تم إرسال ردك على <strong>%(title)s</strong> بنجاح."
+
+msgid "Submit Another Response"
+msgstr "إرسال رد آخر"
+
+msgid "Ufas1Forms - Dynamic Form Builder"
+msgstr "Ufas1Forms - منشئ النماذج الديناميكي"
+
+msgid "Ufas1Forms"
+msgstr "Ufas1Forms"
+
+msgid "Available Forms"
+msgstr "النماذج المتاحة"
+
+msgid "Browse and fill out the forms below"
+msgstr "تصفح واملأ النماذج أدناه"
+
+msgid "No description available."
+msgstr "لا يوجد وصف متاح."
+
+msgid "Login Required"
+msgstr "يتطلب تسجيل الدخول"
+
+msgid "Public"
+msgstr "عام"
+
+msgid "Fill Form"
+msgstr "ملء النموذج"
+
+msgid "No forms available at the moment"
+msgstr "لا توجد نماذج متاحة حالياً"
+
+msgid "Please check back later for new forms."
+msgstr "يرجى المراجعة لاحقاً للنماذج الجديدة."
+
+msgid "My Submission"
+msgstr "إرسالي"
+
+msgid "Edit Submission"
+msgstr "تعديل الإرسال"
+
+msgid "Submitted on"
+msgstr "تم الإرسال في"
+
+msgid "My Dashboard"
+msgstr "لوحة التحكم الخاصة بي"
+
+msgid "Welcome"
+msgstr "مرحباً"
+
+msgid "My Submissions"
+msgstr "إرسالاتي"
+
+msgid "Form"
+msgstr "النموذج"
+
+msgid "Submitted At"
+msgstr "تاريخ الإرسال"
+
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+msgid "Approved"
+msgstr "موافق عليه"
+
+msgid "Rejected"
+msgstr "مرفوض"
+
+msgid "View"
+msgstr "عرض"
+
+msgid "Edit"
+msgstr "تعديل"
+
+msgid "No submissions yet"
+msgstr "لا توجد إرسالات بعد"
+
+msgid "You haven't submitted any forms yet."
+msgstr "لم تقم بإرسال أي نماذج بعد."
+
+msgid "No forms available at the moment."
+msgstr "لا توجد نماذج متاحة حالياً."
+
+msgid "Submission"
+msgstr "الإرسال"
+
+msgid "Submission Details"
+msgstr "تفاصيل الإرسال"
+
+msgid "Download File"
+msgstr "تحميل الملف"
+
+msgid "No file"
+msgstr "لا يوجد ملف"
+
+msgid "Uploaded Files"
+msgstr "الملفات المرفوعة"
+
+msgid "Download"
+msgstr "تحميل"
+
+msgid "Metadata"
+msgstr "البيانات الوصفية"
+
+msgid "Submitted:"
+msgstr "تم الإرسال:"
+
+msgid "By:"
+msgstr "بواسطة:"
+
+msgid "Anonymous"
+msgstr "مجهول"
+
+msgid "IP Address:"
+msgstr "عنوان IP:"
+
+msgid "Back to Submissions"
+msgstr "العودة إلى الإرسالات"
+
+msgid "Export CSV"
+msgstr "تصدير CSV"
+
+msgid "ID"
+msgstr "المعرف"
+
+msgid "Submitted By"
+msgstr "أُرسل بواسطة"
+
+msgid "Share your form to start collecting responses."
+msgstr "شارك نموذجك لبدء جمع الردود."
+
+msgid "Your form is not published yet."
+msgstr "نموذجك غير منشور بعد."
+
+msgid "Username"
+msgstr "اسم المستخدم"
+
+msgid "Password"
+msgstr "كلمة المرور"
+
+msgid "Invalid username or password."
+msgstr "اسم المستخدم أو كلمة المرور غير صحيحة."
+
+msgid "Don't have an account?"
+msgstr "ليس لديك حساب؟"
+
+msgid "Register here"
+msgstr "سجل هنا"
+
+msgid "Create Account"
+msgstr "إنشاء حساب"
+
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+msgid "First Name"
+msgstr "الاسم الأول"
+
+msgid "Last Name"
+msgstr "اسم العائلة"
+
+msgid "Confirm Password"
+msgstr "تأكيد كلمة المرور"
+
+msgid "Already have an account?"
+msgstr "هل لديك حساب بالفعل؟"
+
+msgid "Login here"
+msgstr "سجل الدخول هنا"
+
+msgid "English"
+msgstr "الإنجليزية"
+
+msgid "Français"
+msgstr "الفرنسية"
+
+msgid "العربية"
+msgstr "العربية"
+
+msgid "Save"
+msgstr "حفظ"
+
+msgid "Delete"
+msgstr "حذف"
+
+msgid "Back"
+msgstr "رجوع"
+
+msgid "Close"
+msgstr "إغلاق"
+
+msgid "Yes"
+msgstr "نعم"
+
+msgid "No"
+msgstr "لا"
+
+msgid "Search"
+msgstr "بحث"
+
+msgid "Filter"
+msgstr "تصفية"
+
+msgid "All"
+msgstr "الكل"
+
+msgid "None"
+msgstr "لا شيء"
+
+msgid "Select"
+msgstr "اختيار"
+
+msgid "Loading..."
+msgstr "جاري التحميل..."
+
+msgid "Error"
+msgstr "خطأ"
+
+msgid "Warning"
+msgstr "تحذير"
+
+msgid "Info"
+msgstr "معلومات"
+
+msgid "Confirm"
+msgstr "تأكيد"
+
+msgid ""
+"\n"
+"                    <strong>Ufas1Forms</strong> is a dynamic form builder "
+"application developed for \n"
+"                    <strong>Université Ferhat Abbas Sétif 1</strong>. It "
+"allows administrators to create \n"
+"                    customizable forms for various purposes including "
+"student registration, surveys, \n"
+"                    and data collection.\n"
+"                    "
+msgstr ""
+"\n"
+"                    <strong>Ufas1Forms</strong> هو تطبيق لإنشاء النماذج "
+"الديناميكية تم تطويره لـ\n"
+"                    <strong>جامعة فرحات عباس سطيف 1</strong>. يتيح للمسؤولين "
+"إنشاء\n"
+"                    نماذج قابلة للتخصيص لأغراض مختلفة بما في ذلك تسجيل "
+"الطلاب والاستبيانات\n"
+"                    وجمع البيانات.\n"
+"                    "
+
+msgid "The application features a visual form builder, multiple field types, cascading dropdowns, conditional field visibility, and comprehensive response management with CSV export capabilities."
+msgstr "يتميز التطبيق بمنشئ نماذج مرئي وأنواع حقول متعددة وقوائم منسدلة متتالية ورؤية حقول شرطية وإدارة شاملة للردود مع إمكانيات تصدير CSV."

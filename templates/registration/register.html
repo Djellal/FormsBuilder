@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Register - Ufas1Forms{% endblock %}
+{% block title %}{% trans "Register" %} - Ufas1Forms{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-5">
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
-                <h4 class="mb-0"><i class="bi bi-person-plus"></i> Create Account</h4>
+                <h4 class="mb-0"><i class="bi bi-person-plus"></i> {% trans "Create Account" %}</h4>
             </div>
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="id_username" class="form-label">Username *</label>
+                        <label for="id_username" class="form-label">{% trans "Username" %} *</label>
                         <input type="text" name="username" class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
                                id="id_username" value="{{ form.username.value|default:'' }}" required>
                         {% if form.username.errors %}
@@ -21,7 +22,7 @@
                         {% endif %}
                     </div>
                     <div class="mb-3">
-                        <label for="id_email" class="form-label">Email *</label>
+                        <label for="id_email" class="form-label">{% trans "Email" %} *</label>
                         <input type="email" name="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
                                id="id_email" value="{{ form.email.value|default:'' }}" required>
                         {% if form.email.errors %}
@@ -29,17 +30,17 @@
                         {% endif %}
                     </div>
                     <div class="mb-3">
-                        <label for="id_first_name" class="form-label">First Name</label>
+                        <label for="id_first_name" class="form-label">{% trans "First Name" %}</label>
                         <input type="text" name="first_name" class="form-control" 
                                id="id_first_name" value="{{ form.first_name.value|default:'' }}">
                     </div>
                     <div class="mb-3">
-                        <label for="id_last_name" class="form-label">Last Name</label>
+                        <label for="id_last_name" class="form-label">{% trans "Last Name" %}</label>
                         <input type="text" name="last_name" class="form-control" 
                                id="id_last_name" value="{{ form.last_name.value|default:'' }}">
                     </div>
                     <div class="mb-3">
-                        <label for="id_password1" class="form-label">Password *</label>
+                        <label for="id_password1" class="form-label">{% trans "Password" %} *</label>
                         <input type="password" name="password1" class="form-control {% if form.password1.errors %}is-invalid{% endif %}" 
                                id="id_password1" required>
                         {% if form.password1.errors %}
@@ -47,7 +48,7 @@
                         {% endif %}
                     </div>
                     <div class="mb-3">
-                        <label for="id_password2" class="form-label">Confirm Password *</label>
+                        <label for="id_password2" class="form-label">{% trans "Confirm Password" %} *</label>
                         <input type="password" name="password2" class="form-control {% if form.password2.errors %}is-invalid{% endif %}" 
                                id="id_password2" required>
                         {% if form.password2.errors %}
@@ -62,12 +63,12 @@
                     </div>
                     {% endif %}
                     <button type="submit" class="btn btn-primary w-100">
-                        <i class="bi bi-person-plus"></i> Register
+                        <i class="bi bi-person-plus"></i> {% trans "Register" %}
                     </button>
                 </form>
                 <hr>
                 <p class="text-center mb-0">
-                    Already have an account? <a href="{% url 'login' %}">Login here</a>
+                    {% trans "Already have an account?" %} <a href="{% url 'login' %}">{% trans "Login here" %}</a>
                 </p>
             </div>
         </div>

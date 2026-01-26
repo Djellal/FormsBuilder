@@ -29,11 +29,8 @@ def home(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
     
-    public_forms = Form.objects.filter(
-        status=FormStatus.PUBLISHED,
-        access_level=FormAccess.PUBLIC
-    )
-    return render(request, 'forms_builder/home.html', {'forms': public_forms})
+    active_forms = Form.objects.filter(status=FormStatus.PUBLISHED)
+    return render(request, 'forms_builder/home.html', {'forms': active_forms})
 
 
 def about(request):

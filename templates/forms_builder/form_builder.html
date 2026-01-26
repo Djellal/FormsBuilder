@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Form Builder - {{ form.title }}{% endblock %}
+{% block title %}{% trans "Form Builder" %} - {{ form.title }}{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
@@ -8,7 +9,7 @@
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'form_list' %}">Forms</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'form_list' %}">{% trans "Forms" %}</a></li>
                     <li class="breadcrumb-item active">{{ form.title }}</li>
                 </ol>
             </nav>
@@ -20,7 +21,7 @@
         <div class="col-md-3">
             <div class="card shadow-sm border-0 rounded-3 h-100">
                 <div class="card-header bg-primary text-white rounded-top-3 py-3">
-                    <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i> Add Field</h5>
+                    <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i> {% trans "Add Field" %}</h5>
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
@@ -35,27 +36,27 @@
 
             <div class="card shadow-sm border-0 rounded-3 mt-4">
                 <div class="card-header bg-light border-bottom py-3">
-                    <h5 class="mb-0"><i class="bi bi-gear me-2 text-primary"></i> Form Settings</h5>
+                    <h5 class="mb-0"><i class="bi bi-gear me-2 text-primary"></i> {% trans "Form Settings" %}</h5>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
                         <div class="d-flex justify-content-between">
-                            <span class="fw-semibold">Status:</span>
+                            <span class="fw-semibold">{% trans "Status:" %}</span>
                             {% if form.status == 'published' %}
-                            <span class="badge bg-success fs-6">Published</span>
+                            <span class="badge bg-success fs-6">{% trans "Published" %}</span>
                             {% elif form.status == 'draft' %}
-                            <span class="badge bg-warning text-dark fs-6">Draft</span>
+                            <span class="badge bg-warning text-dark fs-6">{% trans "Draft" %}</span>
                             {% else %}
-                            <span class="badge bg-secondary fs-6">Archived</span>
+                            <span class="badge bg-secondary fs-6">{% trans "Archived" %}</span>
                             {% endif %}
                         </div>
                     </div>
                     <a href="{% url 'form_edit' form.pk %}" class="btn btn-outline-primary w-100 mb-2">
-                        <i class="bi bi-pencil me-1"></i> Edit Settings
+                        <i class="bi bi-pencil me-1"></i> {% trans "Edit Settings" %}
                     </a>
                     {% if form.status == 'published' %}
                     <a href="{% url 'form_submit' form.slug %}" class="btn btn-success w-100" target="_blank">
-                        <i class="bi bi-eye me-1"></i> Preview Form
+                        <i class="bi bi-eye me-1"></i> {% trans "Preview Form" %}
                     </a>
                     {% endif %}
                 </div>
@@ -72,7 +73,7 @@
                         {% endif %}
                         <h5 class="mb-0"><i class="bi bi-ui-checks-grid me-2 text-primary"></i> {{ form.title }}</h5>
                     </div>
-                    <span class="text-muted fst-italic">Drag to reorder</span>
+                    <span class="text-muted fst-italic">{% trans "Drag to reorder" %}</span>
                 </div>
                 <div class="card-body form-preview p-4">
                     <div id="fields-container" class="d-flex flex-column gap-3">
@@ -85,7 +86,7 @@
                                         {% if field.is_required %}<span class="text-danger fw-bold fs-5">*</span>{% endif %}
                                     </div>
                                     <div class="mt-1">
-                                        <small class="text-muted">{{ field.get_field_type_display }} | Name: {{ field.name }}</small>
+                                        <small class="text-muted">{{ field.get_field_type_display }} | {% trans "Name:" %} {{ field.name }}</small>
                                     </div>
                                 </div>
                                 <div class="btn-group btn-group-sm">
@@ -102,8 +103,8 @@
                         <div class="text-center py-5 text-muted" id="empty-message">
                             <div class="d-flex flex-column align-items-center justify-content-center">
                                 <i class="bi bi-inbox display-2 text-muted mb-3"></i>
-                                <h5 class="text-muted">No fields yet</h5>
-                                <p class="mb-0">Add fields from the left panel to get started</p>
+                                <h5 class="text-muted">{% trans "No fields yet" %}</h5>
+                                <p class="mb-0">{% trans "Add fields from the left panel to get started" %}</p>
                             </div>
                         </div>
                         {% endfor %}
@@ -116,25 +117,25 @@
         <div class="col-md-3">
             <div class="card shadow-sm border-0 rounded-3 h-100" id="field-properties-panel" style="display: none;">
                 <div class="card-header bg-light border-bottom py-3">
-                    <h5 class="mb-0"><i class="bi bi-sliders me-2 text-primary"></i> Field Properties</h5>
+                    <h5 class="mb-0"><i class="bi bi-sliders me-2 text-primary"></i> {% trans "Field Properties" %}</h5>
                 </div>
                 <div class="card-body">
                     <form id="field-form">
                         <input type="hidden" id="field-id">
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Label *</label>
+                            <label class="form-label fw-semibold">{% trans "Label" %} *</label>
                             <input type="text" class="form-control" id="field-label" required>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Name *</label>
+                            <label class="form-label fw-semibold">{% trans "Name" %} *</label>
                             <input type="text" class="form-control" id="field-name" required>
-                            <small class="text-muted">Used for data export</small>
+                            <small class="text-muted">{% trans "Used for data export" %}</small>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Type</label>
+                            <label class="form-label fw-semibold">{% trans "Type" %}</label>
                             <select class="form-select" id="field-type">
                                 {% for type_value, type_label in field_types %}
                                 <option value="{{ type_value }}">{{ type_label }}</option>
@@ -143,49 +144,49 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Placeholder</label>
+                            <label class="form-label fw-semibold">{% trans "Placeholder" %}</label>
                             <input type="text" class="form-control" id="field-placeholder">
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Default Value</label>
+                            <label class="form-label fw-semibold">{% trans "Default Value" %}</label>
                             <input type="text" class="form-control" id="field-default">
                         </div>
 
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="field-required">
-                            <label class="form-check-label fw-semibold" for="field-required">Required</label>
+                            <label class="form-check-label fw-semibold" for="field-required">{% trans "Required" %}</label>
                         </div>
 
                         <div class="mb-3" id="options-container" style="display: none;">
-                            <label class="form-label fw-semibold">Options</label>
+                            <label class="form-label fw-semibold">{% trans "Options" %}</label>
                             <div id="options-editor">
                                 <div class="mb-2">
                                     <div class="row g-2">
-                                        <div class="col-md-5"><small class="fw-semibold">Value</small></div>
-                                        <div class="col-md-5"><small class="fw-semibold">Text</small></div>
-                                        <div class="col-md-2"><small class="fw-semibold">Actions</small></div>
+                                        <div class="col-md-5"><small class="fw-semibold">{% trans "Value" %}</small></div>
+                                        <div class="col-md-5"><small class="fw-semibold">{% trans "Text" %}</small></div>
+                                        <div class="col-md-2"><small class="fw-semibold">{% trans "Actions" %}</small></div>
                                     </div>
                                 </div>
                                 <div id="options-list" class="mb-2">
                                     <!-- Options will be added here dynamically -->
                                 </div>
                                 <button type="button" class="btn btn-outline-primary btn-sm w-100 mb-2" id="add-option-btn">
-                                    <i class="bi bi-plus me-1"></i> Add Option
+                                    <i class="bi bi-plus me-1"></i> {% trans "Add Option" %}
                                 </button>
                             </div>
                             <textarea class="form-control mt-2" id="field-options-json" rows="4" placeholder='[{"value":"opt1","text":"Option 1"}]' style="display: none;"></textarea>
                             <div class="form-check mt-2">
                                 <input type="checkbox" class="form-check-input" id="toggle-json-view">
-                                <label class="form-check-label fw-semibold" for="toggle-json-view">Edit as JSON</label>
+                                <label class="form-check-label fw-semibold" for="toggle-json-view">{% trans "Edit as JSON" %}</label>
                             </div>
-                            <small class="text-muted d-block mt-1">For cascading: add "parentValue" key</small>
+                            <small class="text-muted d-block mt-1">{% trans "For cascading: add \"parentValue\" key" %}</small>
                         </div>
 
                         <div class="mb-3" id="parent-field-container" style="display: none;">
-                            <label class="form-label fw-semibold">Parent Field</label>
+                            <label class="form-label fw-semibold">{% trans "Parent Field" %}</label>
                             <select class="form-select" id="field-parent">
-                                <option value="">None</option>
+                                <option value="">{% trans "None" %}</option>
                                 {% for field in fields %}
                                 {% if field.field_type == 'select' %}
                                 <option value="{{ field.id }}">{{ field.label }}</option>
@@ -195,17 +196,17 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Visible Condition (JSON)</label>
+                            <label class="form-label fw-semibold">{% trans "Visible Condition (JSON)" %}</label>
                             <input type="text" class="form-control" id="field-visible-condition" placeholder='{"field_name": "value"}'>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Enabled Condition (JSON)</label>
+                            <label class="form-label fw-semibold">{% trans "Enabled Condition (JSON)" %}</label>
                             <input type="text" class="form-control" id="field-enabled-condition" placeholder='{"field_name": "value"}'>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100 py-2">
-                            <i class="bi bi-check-lg me-1"></i> Save Field
+                            <i class="bi bi-check-lg me-1"></i> {% trans "Save Field" %}
                         </button>
                     </form>
                 </div>
@@ -219,29 +220,29 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">Add New Field</h5>
+                <h5 class="modal-title">{% trans "Add New Field" %}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <form id="add-field-form">
                     <input type="hidden" id="new-field-type">
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Label *</label>
+                        <label class="form-label fw-semibold">{% trans "Label" %} *</label>
                         <input type="text" class="form-control" id="new-field-label" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Name *</label>
+                        <label class="form-label fw-semibold">{% trans "Name" %} *</label>
                         <input type="text" class="form-control" id="new-field-name" required>
                     </div>
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="new-field-required">
-                        <label class="form-check-label fw-semibold" for="new-field-required">Required</label>
+                        <label class="form-check-label fw-semibold" for="new-field-required">{% trans "Required" %}</label>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="save-new-field">Add Field</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                <button type="button" class="btn btn-primary" id="save-new-field">{% trans "Add Field" %}</button>
             </div>
         </div>
     </div>

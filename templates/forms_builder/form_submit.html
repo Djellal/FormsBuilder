@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load form_extras %}
+{% load i18n %}
 
 {% block title %}{{ form.title }}{% endblock %}
 
@@ -9,7 +10,7 @@
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h4 class="mb-0">{{ form.title }}</h4>
-                {% if is_update %}<span class="badge bg-warning text-dark">Updating your submission</span>{% endif %}
+                {% if is_update %}<span class="badge bg-warning text-dark">{% trans "Updating your submission" %}</span>{% endif %}
             </div>
             <div class="card-body">
                 {% if form.description %}
@@ -66,7 +67,7 @@
                                 name="field_{{ field.id }}" id="field_{{ field.id }}"
                                 data-parent-field="{{ field.parent_field_id|default:'' }}"
                                 {% if field.is_required %}required{% endif %}>
-                            <option value="">-- Select --</option>
+                            <option value="">{% trans "-- Select --" %}</option>
                             {% for opt in field.options_json %}
                             <option value="{{ opt.value }}" data-parent-value="{{ opt.parentValue|default:'' }}">
                                 {{ opt.text }}
@@ -147,21 +148,21 @@
                         <select class="form-select faculte-select"
                                 name="field_{{ field.id }}" id="field_{{ field.id }}"
                                 {% if field.is_required %}required{% endif %}>
-                            <option value="">-- Select Faculte --</option>
+                            <option value="">{% trans "-- Select Faculte --" %}</option>
                         </select>
                         
                         {% elif field.field_type == 'select_domaine' %}
                         <select class="form-select domaine-select"
                                 name="field_{{ field.id }}" id="field_{{ field.id }}"
                                 {% if field.is_required %}required{% endif %}>
-                            <option value="">-- Select Domaine --</option>
+                            <option value="">{% trans "-- Select Domaine --" %}</option>
                         </select>
                         {% endif %}
                     </div>
                     {% endfor %}
                     
                     <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="bi bi-send"></i> Submit
+                        <i class="bi bi-send"></i> {% trans "Submit" %}
                     </button>
                 </form>
             </div>

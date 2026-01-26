@@ -6,7 +6,12 @@ SECRET_KEY = 'django-insecure-change-this-in-production-xyz123'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'forms.univ-setif.dz']
+ALLOWED_HOSTS = ['forms.univ-setif.dz', 'localhost', '127.0.0.1']
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://forms.univ-setif.dz',
+    'http://forms.univ-setif.dz',
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -22,6 +27,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -42,6 +48,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.i18n',
                 'forms_builder.context_processors.user_permissions',
             ],
         },
@@ -64,12 +71,26 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 TIME_ZONE = 'UTC'
 USE_I18N = True
+USE_L10N = True
 USE_TZ = True
 
+from django.utils.translation import gettext_lazy as _
+
+LANGUAGES = [
+    ('en', _('English')),
+    ('fr', _('Français')),
+    ('ar', _('العربية')),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Directory where collectstatic will put files
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 MEDIA_URL = 'media/'
