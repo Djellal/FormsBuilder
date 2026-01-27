@@ -168,9 +168,20 @@
                         </div>
                     </div>
 
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="field-required">
-                        <label class="form-check-label fw-semibold" for="field-required">{% trans "Required" %}</label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="field-required">
+                                <label class="form-check-label fw-semibold" for="field-required">{% trans "Required" %}</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="field-admin-only">
+                                <label class="form-check-label fw-semibold" for="field-admin-only">{% trans "Admin Only" %}</label>
+                                <small class="text-muted d-block">{% trans "Only admin/facadmin can edit" %}</small>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mb-3" id="options-container" style="display: none;">
@@ -256,9 +267,19 @@
                         <label class="form-label fw-semibold">{% trans "Name" %} *</label>
                         <input type="text" class="form-control" id="new-field-name" required>
                     </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="new-field-required">
-                        <label class="form-check-label fw-semibold" for="new-field-required">{% trans "Required" %}</label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="new-field-required">
+                                <label class="form-check-label fw-semibold" for="new-field-required">{% trans "Required" %}</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="new-field-admin-only">
+                                <label class="form-check-label fw-semibold" for="new-field-admin-only">{% trans "Admin Only" %}</label>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -461,7 +482,8 @@ document.getElementById('save-new-field').addEventListener('click', function() {
         field_type: document.getElementById('new-field-type').value,
         label: document.getElementById('new-field-label').value,
         name: document.getElementById('new-field-name').value,
-        is_required: document.getElementById('new-field-required').checked
+        is_required: document.getElementById('new-field-required').checked,
+        admin_only: document.getElementById('new-field-admin-only').checked
     };
     
     fetch(`/forms/${formPk}/add-field/`, {
@@ -502,6 +524,7 @@ document.querySelectorAll('.edit-field-btn').forEach(btn => {
                 document.getElementById('field-placeholder').value = data.placeholder;
                 document.getElementById('field-default').value = data.default_value;
                 document.getElementById('field-required').checked = data.is_required;
+                document.getElementById('field-admin-only').checked = data.admin_only;
 
                 // Set options JSON
                 if (data.options_json && data.options_json.length > 0) {
@@ -735,6 +758,7 @@ document.getElementById('save-field-btn').addEventListener('click', function() {
         placeholder: document.getElementById('field-placeholder').value,
         default_value: document.getElementById('field-default').value,
         is_required: document.getElementById('field-required').checked,
+        admin_only: document.getElementById('field-admin-only').checked,
         options_json: options,
         parent_field_id: document.getElementById('field-parent').value || null,
         visible_condition: visibleCondition,

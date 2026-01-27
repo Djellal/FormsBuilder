@@ -165,6 +165,7 @@ def add_field(request, form_pk):
         validation_json=data.get('validation_json', {}),
         visible_condition=data.get('visible_condition', {}),
         enabled_condition=data.get('enabled_condition', {}),
+        admin_only=data.get('admin_only', False),
     )
     
     if data.get('parent_field_id'):
@@ -195,6 +196,7 @@ def update_field(request, field_pk):
     field.validation_json = data.get('validation_json', field.validation_json)
     field.visible_condition = data.get('visible_condition', field.visible_condition)
     field.enabled_condition = data.get('enabled_condition', field.enabled_condition)
+    field.admin_only = data.get('admin_only', field.admin_only)
     
     if 'parent_field_id' in data:
         field.parent_field_id = data['parent_field_id'] or None
@@ -251,6 +253,7 @@ def get_field(request, field_pk):
         'visible_condition': field.visible_condition,
         'enabled_condition': field.enabled_condition,
         'parent_field_id': field.parent_field.id if field.parent_field else None,
+        'admin_only': field.admin_only,
     }
 
     return JsonResponse(field_data)
@@ -350,11 +353,17 @@ def form_submit_view(request, slug):
         for answer in existing_submission.answers.all():
             prefill_data[answer.field_id] = answer.value_text
     
+    is_admin_user = request.user.is_authenticated and (
+        request.user.is_staff or 
+        request.user.groups.filter(name__in=['admin', 'facadmin']).exists()
+    )
+    
     return render(request, 'forms_builder/form_submit.html', {
         'form': form,
         'fields': fields,
         'is_update': is_update,
         'prefill_data': prefill_data,
+        'is_admin_user': is_admin_user,
     })
 
 

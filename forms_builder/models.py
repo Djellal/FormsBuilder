@@ -91,6 +91,7 @@ class FormField(models.Model):
     )
     visible_condition = models.JSONField(default=dict, blank=True, help_text='{"field_name": "value"} for conditional visibility')
     enabled_condition = models.JSONField(default=dict, blank=True, help_text='{"field_name": "value"} for conditional enabling')
+    admin_only = models.BooleanField(default=False, help_text='Only admin or facadmin can edit this field')
 
     class Meta:
         ordering = ['order']
