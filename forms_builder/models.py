@@ -40,6 +40,7 @@ class FieldType(models.TextChoices):
     SELECT_DOMAINE = 'select_domaine', 'Select Domaine'
     SELECT_SPECIALITE = 'select_specialite', 'Select Specialite'
     SELECT_ETABLISSEMENT = 'select_etablissement', 'Select Etablissement'
+    PANEL = 'panel', 'Panel (Field Group)'
 
 
 class SubmissionStatus(models.TextChoices):
@@ -92,6 +93,7 @@ class FormField(models.Model):
     visible_condition = models.JSONField(default=dict, blank=True, help_text='{"field_name": "value"} for conditional visibility')
     enabled_condition = models.JSONField(default=dict, blank=True, help_text='{"field_name": "value"} for conditional enabling')
     admin_only = models.BooleanField(default=False, help_text='Only admin or facadmin can edit this field')
+    icon = models.CharField(max_length=50, blank=True, help_text='Bootstrap icon class (e.g., bi-person, bi-envelope)')
 
     class Meta:
         ordering = ['order']

@@ -1,0 +1,200 @@
+{% load form_extras %}
+{% load i18n %}
+
+{% with field_readonly=field|is_field_readonly:is_admin_user %}
+<div class="mb-3 field-wrapper{% if field_readonly %} admin-only-field{% endif %}" 
+     id="field-wrapper-{{ field.id }}"
+     data-field-name="{{ field.name }}"
+     data-visible-condition='{{ field.visible_condition|safe }}'
+     data-enabled-condition='{{ field.enabled_condition|safe }}'>
+    
+    {% if field.field_type != 'hidden' and field.field_type != 'panel' %}
+    <label for="field_{{ field.id }}" class="form-label">
+        {% if field.icon %}<i class="bi {{ field.icon }} me-1"></i>{% endif %}
+        {{ field.label }}
+        {% if field.is_required %}<span class="text-danger">*</span>{% endif %}
+        {% if field.admin_only %}<span class="badge bg-secondary ms-1">{% trans "Admin" %}</span>{% endif %}
+    </label>
+    {% endif %}
+    
+    {% if field.field_type == 'text' %}
+    <input type="text" class="form-control" 
+           name="field_{{ field.id }}" id="field_{{ field.id }}"
+           placeholder="{{ field.placeholder }}"
+           value="{{ prefill_data|get_item:field.id|default:field.default_value }}"
+           {% if field.is_required and not field_readonly %}required{% endif %}
+           {% if field_readonly %}readonly{% endif %}>
+    
+    {% elif field.field_type == 'email' %}
+    <input type="email" class="form-control"
+           name="field_{{ field.id }}" id="field_{{ field.id }}"
+           placeholder="{{ field.placeholder }}"
+           value="{{ prefill_data|get_item:field.id|default:field.default_value }}"
+           {% if field.is_required and not field_readonly %}required{% endif %}
+           {% if field_readonly %}readonly{% endif %}>
+    
+    {% elif field.field_type == 'number' %}
+    <input type="number" class="form-control"
+           name="field_{{ field.id }}" id="field_{{ field.id }}"
+           placeholder="{{ field.placeholder }}"
+           value="{{ prefill_data|get_item:field.id|default:field.default_value }}"
+           {% if field.is_required and not field_readonly %}required{% endif %}
+           {% if field_readonly %}readonly{% endif %}>
+    
+    {% elif field.field_type == 'textarea' %}
+    <textarea class="form-control"
+              name="field_{{ field.id }}" id="field_{{ field.id }}"
+              placeholder="{{ field.placeholder }}"
+              rows="4"
+              {% if field.is_required and not field_readonly %}required{% endif %}
+              {% if field_readonly %}readonly{% endif %}>{{ prefill_data|get_item:field.id|default:field.default_value }}</textarea>
+    
+    {% elif field.field_type == 'select' %}
+    <select class="form-select"
+            name="field_{{ field.id }}" id="field_{{ field.id }}"
+            data-parent-field="{{ field.parent_field_id|default:'' }}"
+            {% if field.is_required and not field_readonly %}required{% endif %}
+            {% if field_readonly %}disabled{% endif %}>
+        <option value="">{% trans "-- Select --" %}</option>
+        {% for opt in field.options_json %}
+        <option value="{{ opt.value }}" data-parent-value="{{ opt.parentValue|default:'' }}"
+                {% if prefill_data|get_item:field.id == opt.value %}selected{% endif %}>
+            {{ opt.text }}
+        </option>
+        {% endfor %}
+    </select>
+    {% if field_readonly %}<input type="hidden" name="field_{{ field.id }}" value="{{ prefill_data|get_item:field.id }}">{% endif %}
+    
+    {% elif field.field_type == 'radio' %}
+    {% for opt in field.options_json %}
+    <div class="form-check">
+        <input class="form-check-input" type="radio"
+               name="field_{{ field.id }}" 
+               id="field_{{ field.id }}_{{ forloop.counter }}"
+               value="{{ opt.value }}"
+               {% if prefill_data|get_item:field.id == opt.value %}checked{% endif %}
+               {% if field.is_required and not field_readonly %}required{% endif %}
+               {% if field_readonly %}disabled{% endif %}>
+        <label class="form-check-label" for="field_{{ field.id }}_{{ forloop.counter }}">
+            {{ opt.text }}
+        </label>
+    </div>
+    {% endfor %}
+    {% if field_readonly %}<input type="hidden" name="field_{{ field.id }}" value="{{ prefill_data|get_item:field.id }}">{% endif %}
+    
+    {% elif field.field_type == 'checkbox' %}
+    {% for opt in field.options_json %}
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox"
+               name="field_{{ field.id }}"
+               id="field_{{ field.id }}_{{ forloop.counter }}"
+               value="{{ opt.value }}"
+               {% if field_readonly %}disabled{% endif %}>
+        <label class="form-check-label" for="field_{{ field.id }}_{{ forloop.counter }}">
+            {{ opt.text }}
+        </label>
+    </div>
+    {% endfor %}
+    
+    {% elif field.field_type == 'date' %}
+    <input type="date" class="form-control"
+           name="field_{{ field.id }}" id="field_{{ field.id }}"
+           value="{{ prefill_data|get_item:field.id|default:field.default_value }}"
+           {% if field.is_required and not field_readonly %}required{% endif %}
+           {% if field_readonly %}readonly{% endif %}>
+    
+    {% elif field.field_type == 'time' %}
+    <input type="time" class="form-control"
+           name="field_{{ field.id }}" id="field_{{ field.id }}"
+           value="{{ prefill_data|get_item:field.id|default:field.default_value }}"
+           {% if field.is_required and not field_readonly %}required{% endif %}
+           {% if field_readonly %}readonly{% endif %}>
+    
+    {% elif field.field_type == 'phone' %}
+    <input type="tel" class="form-control"
+           name="field_{{ field.id }}" id="field_{{ field.id }}"
+           placeholder="{{ field.placeholder }}"
+           value="{{ prefill_data|get_item:field.id|default:field.default_value }}"
+           {% if field.is_required and not field_readonly %}required{% endif %}
+           {% if field_readonly %}readonly{% endif %}>
+    
+    {% elif field.field_type == 'url' %}
+    <input type="url" class="form-control"
+           name="field_{{ field.id }}" id="field_{{ field.id }}"
+           placeholder="{{ field.placeholder }}"
+           value="{{ prefill_data|get_item:field.id|default:field.default_value }}"
+           {% if field.is_required and not field_readonly %}required{% endif %}
+           {% if field_readonly %}readonly{% endif %}>
+    
+    {% elif field.field_type == 'password' %}
+    <input type="password" class="form-control"
+           name="field_{{ field.id }}" id="field_{{ field.id }}"
+           placeholder="{{ field.placeholder }}"
+           {% if field.is_required and not field_readonly %}required{% endif %}
+           {% if field_readonly %}readonly{% endif %}>
+    
+    {% elif field.field_type == 'hidden' %}
+    <input type="hidden"
+           name="field_{{ field.id }}" id="field_{{ field.id }}"
+           value="{{ prefill_data|get_item:field.id|default:field.default_value }}">
+    
+    {% elif field.field_type == 'file' %}
+    {% if not field_readonly %}
+    {% with existing_file=prefill_data|get_item:field.id %}
+    {% if existing_file %}
+    <div class="mb-2">
+        <span class="text-muted">{% trans "Current file:" %}</span>
+        <a href="{{ MEDIA_URL }}uploads/{{ existing_file }}" target="_blank">{{ existing_file }}</a>
+        <input type="hidden" name="existing_file_{{ field.id }}" value="{{ existing_file }}">
+    </div>
+    {% endif %}
+    {% endwith %}
+    <input type="file" class="form-control"
+           name="field_{{ field.id }}" id="field_{{ field.id }}"
+           {% if field.is_required and not prefill_data|get_item:field.id %}required{% endif %}>
+    {% else %}
+    {% with existing_file=prefill_data|get_item:field.id %}
+    {% if existing_file %}
+    <div class="form-control-plaintext">
+        <a href="{{ MEDIA_URL }}uploads/{{ existing_file }}" target="_blank">{{ existing_file }}</a>
+        <input type="hidden" name="existing_file_{{ field.id }}" value="{{ existing_file }}">
+    </div>
+    {% else %}
+    <span class="text-muted">{% trans "No file uploaded" %}</span>
+    {% endif %}
+    {% endwith %}
+    {% endif %}
+    
+    {% elif field.field_type == 'select_faculte' %}
+    <select class="form-select faculte-select"
+            name="field_{{ field.id }}" id="field_{{ field.id }}"
+            data-prefill="{{ prefill_data|get_item:field.id|default:'' }}"
+            {% if field.is_required and not field_readonly %}required{% endif %}
+            {% if field_readonly %}disabled{% endif %}>
+        <option value="">{% trans "-- Select Faculte --" %}</option>
+    </select>
+    {% if field_readonly %}<input type="hidden" name="field_{{ field.id }}" value="{{ prefill_data|get_item:field.id }}">{% endif %}
+    
+    {% elif field.field_type == 'select_domaine' %}
+    <select class="form-select domaine-select"
+            name="field_{{ field.id }}" id="field_{{ field.id }}"
+            data-prefill="{{ prefill_data|get_item:field.id|default:'' }}"
+            {% if field.is_required and not field_readonly %}required{% endif %}
+            {% if field_readonly %}disabled{% endif %}>
+        <option value="">{% trans "-- Select Domaine --" %}</option>
+    </select>
+    {% if field_readonly %}<input type="hidden" name="field_{{ field.id }}" value="{{ prefill_data|get_item:field.id }}">{% endif %}
+    
+    {% elif field.field_type == 'select_specialite' %}
+    <select class="form-select specialite-select"
+            name="field_{{ field.id }}" id="field_{{ field.id }}"
+            data-prefill="{{ prefill_data|get_item:field.id|default:'' }}"
+            {% if field.is_required and not field_readonly %}required{% endif %}
+            {% if field_readonly %}disabled{% endif %}>
+        <option value="">{% trans "-- Select Specialite --" %}</option>
+    </select>
+    {% if field_readonly %}<input type="hidden" name="field_{{ field.id }}" value="{{ prefill_data|get_item:field.id }}">{% endif %}
+    
+    {% endif %}
+</div>
+{% endwith %}

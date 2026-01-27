@@ -144,7 +144,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">{% trans "Type" %}</label>
                                 <select class="form-select" id="field-type">
@@ -154,13 +154,20 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">{% trans "Icon" %}</label>
+                                <input type="text" class="form-control" id="field-icon" placeholder="bi-person">
+                                <small class="text-muted">{% trans "Bootstrap icon class" %}</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">{% trans "Placeholder" %}</label>
                                 <input type="text" class="form-control" id="field-placeholder">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">{% trans "Default Value" %}</label>
                                 <input type="text" class="form-control" id="field-default">
@@ -211,7 +218,7 @@
                     </div>
 
                     <div class="mb-3" id="parent-field-container" style="display: none;">
-                        <label class="form-label fw-semibold">{% trans "Parent Field" %}</label>
+                        <label class="form-label fw-semibold">{% trans "Parent Field (for cascading)" %}</label>
                         <select class="form-select" id="field-parent">
                             <option value="">{% trans "None" %}</option>
                             {% for field in fields %}
@@ -220,6 +227,19 @@
                             {% endif %}
                             {% endfor %}
                         </select>
+                    </div>
+
+                    <div class="mb-3" id="panel-parent-container">
+                        <label class="form-label fw-semibold">{% trans "Panel (Group)" %}</label>
+                        <select class="form-select" id="field-panel">
+                            <option value="">{% trans "None (Top Level)" %}</option>
+                            {% for field in fields %}
+                            {% if field.field_type == 'panel' %}
+                            <option value="{{ field.id }}">{{ field.label }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">{% trans "Place this field inside a panel" %}</small>
                     </div>
 
                     <div class="row">
@@ -525,6 +545,7 @@ document.querySelectorAll('.edit-field-btn').forEach(btn => {
                 document.getElementById('field-default').value = data.default_value;
                 document.getElementById('field-required').checked = data.is_required;
                 document.getElementById('field-admin-only').checked = data.admin_only;
+                document.getElementById('field-icon').value = data.icon || '';
 
                 // Set options JSON
                 if (data.options_json && data.options_json.length > 0) {
@@ -543,11 +564,18 @@ document.querySelectorAll('.edit-field-btn').forEach(btn => {
                     document.getElementById('field-enabled-condition').value = JSON.stringify(data.enabled_condition);
                 }
 
-                // Set parent field
+                // Set parent field (for cascading selects)
                 if (data.parent_field_id) {
                     document.getElementById('field-parent').value = data.parent_field_id;
                 } else {
                     document.getElementById('field-parent').value = '';
+                }
+                
+                // Set panel (for grouping)
+                if (data.panel_id) {
+                    document.getElementById('field-panel').value = data.panel_id;
+                } else {
+                    document.getElementById('field-panel').value = '';
                 }
 
                 // Trigger change event to show/hide options container
@@ -580,6 +608,9 @@ document.getElementById('field-type').addEventListener('change', function() {
     const showOptions = ['select', 'radio', 'checkbox'].includes(this.value);
     document.getElementById('options-container').style.display = showOptions ? 'block' : 'none';
     document.getElementById('parent-field-container').style.display = this.value === 'select' ? 'block' : 'none';
+    
+    // Hide panel selector for panel fields (panels can't be nested)
+    document.getElementById('panel-parent-container').style.display = this.value === 'panel' ? 'none' : 'block';
 
     // Reset JSON view when changing field type
     document.getElementById('toggle-json-view').checked = false;
@@ -751,6 +782,9 @@ document.getElementById('save-field-btn').addEventListener('click', function() {
         if (ec) enabledCondition = JSON.parse(ec);
     } catch(e) {}
 
+    // Determine parent_field_id: use panel if set, otherwise use parent field
+    let parentFieldId = document.getElementById('field-panel').value || document.getElementById('field-parent').value || null;
+    
     const data = {
         label: document.getElementById('field-label').value,
         name: document.getElementById('field-name').value,
@@ -759,8 +793,9 @@ document.getElementById('save-field-btn').addEventListener('click', function() {
         default_value: document.getElementById('field-default').value,
         is_required: document.getElementById('field-required').checked,
         admin_only: document.getElementById('field-admin-only').checked,
+        icon: document.getElementById('field-icon').value,
         options_json: options,
-        parent_field_id: document.getElementById('field-parent').value || null,
+        parent_field_id: parentFieldId,
         visible_condition: visibleCondition,
         enabled_condition: enabledCondition
     };

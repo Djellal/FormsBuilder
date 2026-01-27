@@ -166,6 +166,7 @@ def add_field(request, form_pk):
         visible_condition=data.get('visible_condition', {}),
         enabled_condition=data.get('enabled_condition', {}),
         admin_only=data.get('admin_only', False),
+        icon=data.get('icon', ''),
     )
     
     if data.get('parent_field_id'):
@@ -197,6 +198,7 @@ def update_field(request, field_pk):
     field.visible_condition = data.get('visible_condition', field.visible_condition)
     field.enabled_condition = data.get('enabled_condition', field.enabled_condition)
     field.admin_only = data.get('admin_only', field.admin_only)
+    field.icon = data.get('icon', field.icon)
     
     if 'parent_field_id' in data:
         field.parent_field_id = data['parent_field_id'] or None
@@ -240,6 +242,15 @@ def get_field(request, field_pk):
     if field.form.created_by != request.user and not request.user.is_staff:
         return JsonResponse({'error': 'Access denied'}, status=403)
 
+    # Determine if parent is a panel or a cascading select
+    panel_id = None
+    cascading_parent_id = None
+    if field.parent_field:
+        if field.parent_field.field_type == FieldType.PANEL:
+            panel_id = field.parent_field.id
+        else:
+            cascading_parent_id = field.parent_field.id
+    
     field_data = {
         'id': field.id,
         'name': field.name,
@@ -252,8 +263,10 @@ def get_field(request, field_pk):
         'validation_json': field.validation_json,
         'visible_condition': field.visible_condition,
         'enabled_condition': field.enabled_condition,
-        'parent_field_id': field.parent_field.id if field.parent_field else None,
+        'parent_field_id': cascading_parent_id,
+        'panel_id': panel_id,
         'admin_only': field.admin_only,
+        'icon': field.icon,
     }
 
     return JsonResponse(field_data)
@@ -358,9 +371,40 @@ def form_submit_view(request, slug):
         request.user.groups.filter(name__in=['admin', 'facadmin']).exists()
     )
     
+    # Organize fields: panels with their children, and standalone fields
+    # First, prefetch all fields with their parent relationships
+    fields = list(form.fields.select_related('parent_field').all())
+    
+    panels = []
+    standalone_fields = []
+    panel_children = {}  # panel_id -> list of child fields
+    panel_ids = set()
+    
+    # First pass: identify all panels
+    for field in fields:
+        if field.field_type == FieldType.PANEL:
+            panels.append(field)
+            panel_ids.add(field.id)
+            panel_children[field.id] = []
+    
+    # Second pass: categorize fields
+    for field in fields:
+        if field.field_type == FieldType.PANEL:
+            continue  # Already handled
+        elif field.parent_field_id and field.parent_field_id in panel_ids:
+            panel_children[field.parent_field_id].append(field)
+        else:
+            standalone_fields.append(field)
+    
+    # Attach children to panels
+    for panel in panels:
+        panel.panel_fields = panel_children.get(panel.id, [])
+    
     return render(request, 'forms_builder/form_submit.html', {
         'form': form,
         'fields': fields,
+        'panels': panels,
+        'standalone_fields': standalone_fields,
         'is_update': is_update,
         'prefill_data': prefill_data,
         'is_admin_user': is_admin_user,
