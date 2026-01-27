@@ -449,12 +449,46 @@ def submission_detail(request, pk):
     if submission.form.created_by != request.user and not request.user.is_staff:
         messages.error(request, 'Access denied.')
         return redirect('form_list')
-    
+
+    # Get all fields and answers for the form
+    fields = submission.form.fields.select_related('parent_field').all()
     answers = submission.answers.all().select_related('field')
+
+    # Create a mapping of field_id to answer for easy lookup
+    answer_map = {answer.field_id: answer for answer in answers}
+
+    # Organize fields: panels with their children, and standalone fields
+    panels = []
+    standalone_answers = []
+    panel_children = {}  # panel_id -> list of child answers
+    panel_ids = set()
+
+    # First pass: identify all panels
+    for field in fields:
+        if field.field_type == FieldType.PANEL:
+            panels.append(field)
+            panel_ids.add(field.id)
+            panel_children[field.id] = []
+
+    # Second pass: categorize answers
+    for answer in answers:
+        field = answer.field
+        if field.field_type == FieldType.PANEL:
+            continue  # Skip panel fields themselves
+        elif field.parent_field_id and field.parent_field_id in panel_ids:
+            panel_children[field.parent_field_id].append(answer)
+        else:
+            standalone_answers.append(answer)
+
+    # Attach children to panels
+    for panel in panels:
+        panel.panel_answers = panel_children.get(panel.id, [])
+
     files = submission.files.all()
     return render(request, 'forms_builder/submission_detail.html', {
         'submission': submission,
-        'answers': answers,
+        'panels': panels,
+        'standalone_answers': standalone_answers,
         'files': files,
     })
 
