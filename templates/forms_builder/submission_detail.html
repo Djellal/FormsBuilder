@@ -31,7 +31,7 @@
                             <table class="table table-striped mb-0">
                                 <tbody>
                                     {% for answer, field in panel.panel_answers %}
-                                    <tr>
+                                    <tr {% if field.background_color %}style="background-color: {{ field.background_color }};"{% endif %}>
                                         <th style="width: 30%;">{{ field.label }}</th>
                                         <td>
                                             {% if field.admin_only and is_admin %}
@@ -83,7 +83,7 @@
                 <table class="table table-striped">
                     <tbody>
                         {% for answer, field in standalone_answers %}
-                        <tr>
+                        <tr {% if field.background_color %}style="background-color: {{ field.background_color }};"{% endif %}>
                             <th style="width: 30%;">{{ field.label }}</th>
                             <td>
                                 {% if field.admin_only and is_admin %}

@@ -78,7 +78,7 @@
                 <div class="card-body form-preview p-4">
                     <div id="fields-container" class="d-flex flex-column gap-3">
                         {% for field in fields %}
-                        <div class="field-card card border rounded-2 p-3 shadow-sm bg-light" data-field-id="{{ field.id }}">
+                        <div class="field-card card border rounded-2 p-3 shadow-sm bg-light" data-field-id="{{ field.id }}" {% if field.background_color %}style="background-color: {{ field.background_color }};"{% endif %}>
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <div class="d-flex align-items-center">
@@ -159,6 +159,16 @@
                                 <label class="form-label fw-semibold">{% trans "Icon" %}</label>
                                 <input type="text" class="form-control" id="field-icon" placeholder="bi-person">
                                 <small class="text-muted">{% trans "Bootstrap icon class" %}</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">{% trans "Background Color" %}</label>
+                                <div class="d-flex">
+                                    <input type="color" class="form-control form-control-color me-2" id="field-background-color-picker" title="{% trans "Choose background color" %}" style="width: 50px; height: 40px;">
+                                    <input type="text" class="form-control" id="field-background-color" placeholder="#f0f0f0">
+                                </div>
+                                <small class="text-muted">{% trans "Color name or hex code" %}</small>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -300,6 +310,14 @@
                                 <label class="form-check-label fw-semibold" for="new-field-admin-only">{% trans "Admin Only" %}</label>
                             </div>
                         </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{% trans "Background Color" %}</label>
+                        <div class="d-flex">
+                            <input type="color" class="form-control form-control-color me-2" id="new-field-background-color-picker" title="{% trans "Choose background color" %}" style="width: 50px; height: 40px;">
+                            <input type="text" class="form-control" id="new-field-background-color" placeholder="#f0f0f0">
+                        </div>
+                        <small class="text-muted">{% trans "Color name or hex code" %}</small>
                     </div>
                 </form>
             </div>
@@ -481,6 +499,9 @@ document.querySelectorAll('.add-field-btn').forEach(btn => {
         document.getElementById('new-field-label').value = '';
         document.getElementById('new-field-name').value = '';
         document.getElementById('new-field-required').checked = false;
+        document.getElementById('new-field-admin-only').checked = false;
+        document.getElementById('new-field-background-color').value = '';
+        document.getElementById('new-field-background-color-picker').value = '#ffffff';
         new bootstrap.Modal(document.getElementById('addFieldModal')).show();
     });
 });
@@ -503,9 +524,10 @@ document.getElementById('save-new-field').addEventListener('click', function() {
         label: document.getElementById('new-field-label').value,
         name: document.getElementById('new-field-name').value,
         is_required: document.getElementById('new-field-required').checked,
-        admin_only: document.getElementById('new-field-admin-only').checked
+        admin_only: document.getElementById('new-field-admin-only').checked,
+        background_color: document.getElementById('new-field-background-color').value
     };
-    
+
     fetch(`/forms/${formPk}/add-field/`, {
         method: 'POST',
         headers: {
@@ -522,6 +544,12 @@ document.getElementById('save-new-field').addEventListener('click', function() {
     });
 });
 
+// Reset color picker when opening add field modal
+document.getElementById('addFieldModal').addEventListener('shown.bs.modal', function () {
+    document.getElementById('new-field-background-color').value = '';
+    document.getElementById('new-field-background-color-picker').value = '#ffffff';
+});
+
 // Field Properties Modal instance
 const fieldPropertiesModal = new bootstrap.Modal(document.getElementById('fieldPropertiesModal'));
 
@@ -529,7 +557,10 @@ const fieldPropertiesModal = new bootstrap.Modal(document.getElementById('fieldP
 document.querySelectorAll('.edit-field-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         const fieldId = this.dataset.fieldId;
-        
+
+        // Reset the color picker to white initially
+        document.getElementById('field-background-color-picker').value = '#ffffff';
+
         // Show the modal
         fieldPropertiesModal.show();
 
@@ -546,6 +577,14 @@ document.querySelectorAll('.edit-field-btn').forEach(btn => {
                 document.getElementById('field-required').checked = data.is_required;
                 document.getElementById('field-admin-only').checked = data.admin_only;
                 document.getElementById('field-icon').value = data.icon || '';
+                document.getElementById('field-background-color').value = data.background_color || '';
+                // Update the color picker to match the text value
+                if (data.background_color) {
+                    document.getElementById('field-background-color-picker').value = data.background_color.startsWith('#') ?
+                        data.background_color : '#' + data.background_color;
+                } else {
+                    document.getElementById('field-background-color-picker').value = '#ffffff';
+                }
 
                 // Set options JSON
                 if (data.options_json && data.options_json.length > 0) {
@@ -750,6 +789,34 @@ function populateOptionsEditor(optionsArray) {
     }
 }
 
+// Sync color picker and text input for field properties
+document.getElementById('field-background-color').addEventListener('input', function() {
+    const colorValue = this.value;
+    if (colorValue) {
+        document.getElementById('field-background-color-picker').value = colorValue.startsWith('#') ?
+            colorValue : '#' + colorValue;
+    }
+});
+
+document.getElementById('field-background-color-picker').addEventListener('input', function() {
+    const colorValue = this.value;
+    document.getElementById('field-background-color').value = colorValue;
+});
+
+// Sync color picker and text input for add field modal
+document.getElementById('new-field-background-color').addEventListener('input', function() {
+    const colorValue = this.value;
+    if (colorValue) {
+        document.getElementById('new-field-background-color-picker').value = colorValue.startsWith('#') ?
+            colorValue : '#' + colorValue;
+    }
+});
+
+document.getElementById('new-field-background-color-picker').addEventListener('input', function() {
+    const colorValue = this.value;
+    document.getElementById('new-field-background-color').value = colorValue;
+});
+
 // Save field button
 document.getElementById('save-field-btn').addEventListener('click', function() {
     const fieldId = document.getElementById('field-id').value;
@@ -784,7 +851,7 @@ document.getElementById('save-field-btn').addEventListener('click', function() {
 
     // Determine parent_field_id: use panel if set, otherwise use parent field
     let parentFieldId = document.getElementById('field-panel').value || document.getElementById('field-parent').value || null;
-    
+
     const data = {
         label: document.getElementById('field-label').value,
         name: document.getElementById('field-name').value,
@@ -794,6 +861,7 @@ document.getElementById('save-field-btn').addEventListener('click', function() {
         is_required: document.getElementById('field-required').checked,
         admin_only: document.getElementById('field-admin-only').checked,
         icon: document.getElementById('field-icon').value,
+        background_color: document.getElementById('field-background-color').value,
         options_json: options,
         parent_field_id: parentFieldId,
         visible_condition: visibleCondition,

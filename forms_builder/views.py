@@ -167,8 +167,9 @@ def add_field(request, form_pk):
         enabled_condition=data.get('enabled_condition', {}),
         admin_only=data.get('admin_only', False),
         icon=data.get('icon', ''),
+        background_color=data.get('background_color', ''),
     )
-    
+
     if data.get('parent_field_id'):
         field.parent_field_id = data['parent_field_id']
         field.save()
@@ -199,10 +200,11 @@ def update_field(request, field_pk):
     field.enabled_condition = data.get('enabled_condition', field.enabled_condition)
     field.admin_only = data.get('admin_only', field.admin_only)
     field.icon = data.get('icon', field.icon)
-    
+    field.background_color = data.get('background_color', field.background_color)
+
     if 'parent_field_id' in data:
         field.parent_field_id = data['parent_field_id'] or None
-    
+
     field.save()
     return JsonResponse({'success': True})
 
@@ -267,6 +269,7 @@ def get_field(request, field_pk):
         'panel_id': panel_id,
         'admin_only': field.admin_only,
         'icon': field.icon,
+        'background_color': field.background_color,
     }
 
     return JsonResponse(field_data)

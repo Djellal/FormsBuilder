@@ -2,11 +2,12 @@
 {% load i18n %}
 
 {% with field_readonly=field|is_field_readonly:is_admin_user %}
-<div class="mb-3 field-wrapper{% if field_readonly %} admin-only-field{% endif %}" 
+<div class="mb-3 field-wrapper{% if field_readonly %} admin-only-field{% endif %}"
      id="field-wrapper-{{ field.id }}"
      data-field-name="{{ field.name }}"
      data-visible-condition='{{ field.visible_condition|safe }}'
-     data-enabled-condition='{{ field.enabled_condition|safe }}'>
+     data-enabled-condition='{{ field.enabled_condition|safe }}'
+     {% if field.background_color %}style="background-color: {{ field.background_color }}; padding: 10px; border-radius: 5px;"{% endif %}>
     
     {% if field.field_type != 'hidden' and field.field_type != 'panel' %}
     <label for="field_{{ field.id }}" class="form-label">

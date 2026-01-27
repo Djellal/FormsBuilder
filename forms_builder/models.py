@@ -94,6 +94,7 @@ class FormField(models.Model):
     enabled_condition = models.JSONField(default=dict, blank=True, help_text='{"field_name": "value"} for conditional enabling')
     admin_only = models.BooleanField(default=False, help_text='Only admin or facadmin can edit this field')
     icon = models.CharField(max_length=50, blank=True, help_text='Bootstrap icon class (e.g., bi-person, bi-envelope)')
+    background_color = models.CharField(max_length=20, blank=True, help_text='Background color for the field (e.g., lightblue, #f0f0f0)')
 
     class Meta:
         ordering = ['order']

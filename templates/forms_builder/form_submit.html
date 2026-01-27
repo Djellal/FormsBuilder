@@ -22,7 +22,7 @@
                     
                     {# Render panels with their fields #}
                     {% for panel in panels %}
-                    <div class="card mb-4 panel-wrapper" id="panel-{{ panel.id }}">
+                    <div class="card mb-4 panel-wrapper" id="panel-{{ panel.id }}" {% if panel.background_color %}style="background-color: {{ panel.background_color }};"{% endif %}>
                         <div class="card-header bg-light">
                             <h5 class="mb-0">
                                 {% if panel.icon %}<i class="bi {{ panel.icon }} me-2"></i>{% endif %}
