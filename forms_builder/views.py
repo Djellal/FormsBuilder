@@ -11,7 +11,7 @@ import json
 
 from .models import Form, FormField, FormSubmission, FormAnswer, UploadedFile, FormStatus, FieldType, FormAccess
 from .forms import StudentRegistrationForm, FormForm, FormUpdateForm
-from academic.models import Faculte, Domaine
+from academic.models import Faculte, Domaine, Specialite
 from django.contrib.auth.models import Group
 from django.contrib.auth import login
 
@@ -302,6 +302,7 @@ def form_submit_view(request, slug):
                 )
             elif field.field_type == FieldType.FILE:
                 uploaded_file = request.FILES.get(f'field_{field.id}')
+                existing_file = request.POST.get(f'existing_file_{field.id}')
                 if uploaded_file:
                     import uuid
                     stored_name = f"{uuid.uuid4().hex}_{uploaded_file.name}"
@@ -324,6 +325,12 @@ def form_submit_view(request, slug):
                         submission=submission,
                         field=field,
                         value_text=stored_name,
+                    )
+                elif existing_file:
+                    FormAnswer.objects.create(
+                        submission=submission,
+                        field=field,
+                        value_text=existing_file,
                     )
             else:
                 FormAnswer.objects.create(
@@ -434,6 +441,14 @@ def api_domaines(request):
     if faculte_id:
         domaines = domaines.filter(faculte_id=faculte_id)
     return JsonResponse(list(domaines.values('id', 'nom', 'faculte_id')), safe=False)
+
+
+def api_specialites(request):
+    domaine_id = request.GET.get('domaine_id')
+    specialites = Specialite.objects.all()
+    if domaine_id:
+        specialites = specialites.filter(domaine_id=domaine_id)
+    return JsonResponse(list(specialites.values('id', 'nom', 'domaine_id')), safe=False)
 
 
 def api_child_options(request, field_pk):

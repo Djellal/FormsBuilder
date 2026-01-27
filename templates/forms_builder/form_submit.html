@@ -140,13 +140,23 @@
                                value="{{ field.default_value }}">
                         
                         {% elif field.field_type == 'file' %}
+                        {% with existing_file=prefill_data|get_item:field.id %}
+                        {% if existing_file %}
+                        <div class="mb-2">
+                            <span class="text-muted">{% trans "Current file:" %}</span>
+                            <a href="{{ MEDIA_URL }}uploads/{{ existing_file }}" target="_blank">{{ existing_file }}</a>
+                            <input type="hidden" name="existing_file_{{ field.id }}" value="{{ existing_file }}">
+                        </div>
+                        {% endif %}
+                        {% endwith %}
                         <input type="file" class="form-control"
                                name="field_{{ field.id }}" id="field_{{ field.id }}"
-                               {% if field.is_required %}required{% endif %}>
+                               {% if field.is_required and not prefill_data|get_item:field.id %}required{% endif %}>
                         
                         {% elif field.field_type == 'select_faculte' %}
                         <select class="form-select faculte-select"
                                 name="field_{{ field.id }}" id="field_{{ field.id }}"
+                                data-prefill="{{ prefill_data|get_item:field.id|default:'' }}"
                                 {% if field.is_required %}required{% endif %}>
                             <option value="">{% trans "-- Select Faculte --" %}</option>
                         </select>
@@ -154,8 +164,17 @@
                         {% elif field.field_type == 'select_domaine' %}
                         <select class="form-select domaine-select"
                                 name="field_{{ field.id }}" id="field_{{ field.id }}"
+                                data-prefill="{{ prefill_data|get_item:field.id|default:'' }}"
                                 {% if field.is_required %}required{% endif %}>
                             <option value="">{% trans "-- Select Domaine --" %}</option>
+                        </select>
+                        
+                        {% elif field.field_type == 'select_specialite' %}
+                        <select class="form-select specialite-select"
+                                name="field_{{ field.id }}" id="field_{{ field.id }}"
+                                data-prefill="{{ prefill_data|get_item:field.id|default:'' }}"
+                                {% if field.is_required %}required{% endif %}>
+                            <option value="">{% trans "-- Select Specialite --" %}</option>
                         </select>
                         {% endif %}
                     </div>
@@ -176,40 +195,108 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Load Facultes
     const faculteSelects = document.querySelectorAll('.faculte-select');
+    const domaineSelects = document.querySelectorAll('.domaine-select');
+    const specialiteSelects = document.querySelectorAll('.specialite-select');
+    
     if (faculteSelects.length > 0) {
         fetch('/api/facultes/')
             .then(r => r.json())
             .then(facultes => {
                 faculteSelects.forEach(select => {
+                    const prefillValue = select.dataset.prefill;
                     facultes.forEach(f => {
                         const opt = document.createElement('option');
                         opt.value = f.id;
                         opt.textContent = f.nom;
+                        if (prefillValue && prefillValue == f.id) {
+                            opt.selected = true;
+                        }
                         select.appendChild(opt);
                     });
+                    // Trigger domaines load if prefilled
+                    if (prefillValue) {
+                        loadDomaines(prefillValue);
+                    }
                 });
             });
     }
     
-    // Faculte change -> load Domaines
+    // Function to load Domaines based on faculte selection
+    function loadDomaines(faculteId, callback) {
+        domaineSelects.forEach(ds => {
+            const prefillValue = ds.dataset.prefill;
+            ds.innerHTML = '<option value="">-- Select Domaine --</option>';
+            const url = faculteId ? `/api/domaines/?faculte_id=${faculteId}` : '/api/domaines/';
+            fetch(url)
+                .then(r => r.json())
+                .then(domaines => {
+                    domaines.forEach(d => {
+                        const opt = document.createElement('option');
+                        opt.value = d.id;
+                        opt.textContent = d.nom;
+                        if (prefillValue && prefillValue == d.id) {
+                            opt.selected = true;
+                        }
+                        ds.appendChild(opt);
+                    });
+                    // Trigger specialites load if prefilled
+                    if (prefillValue) {
+                        loadSpecialites(prefillValue);
+                    }
+                    if (callback) callback();
+                });
+        });
+    }
+    
+    // Initial load of Domaines (all if no faculte selected, but don't load yet if faculte will be prefilled)
+    if (domaineSelects.length > 0) {
+        const hasPrefillFaculte = Array.from(faculteSelects).some(s => s.dataset.prefill);
+        if (!hasPrefillFaculte) {
+            loadDomaines(null);
+        }
+    }
+    
+    // Faculte change -> reload Domaines
     faculteSelects.forEach(select => {
         select.addEventListener('change', function() {
-            const faculteId = this.value;
-            document.querySelectorAll('.domaine-select').forEach(ds => {
-                ds.innerHTML = '<option value="">-- Select Domaine --</option>';
-                if (faculteId) {
-                    fetch(`/api/domaines/?faculte_id=${faculteId}`)
-                        .then(r => r.json())
-                        .then(domaines => {
-                            domaines.forEach(d => {
-                                const opt = document.createElement('option');
-                                opt.value = d.id;
-                                opt.textContent = d.nom;
-                                ds.appendChild(opt);
-                            });
-                        });
-                }
-            });
+            loadDomaines(this.value);
+        });
+    });
+    
+    // Function to load Specialites based on domaine selection
+    function loadSpecialites(domaineId) {
+        specialiteSelects.forEach(ss => {
+            const prefillValue = ss.dataset.prefill;
+            ss.innerHTML = '<option value="">-- Select Specialite --</option>';
+            const url = domaineId ? `/api/specialites/?domaine_id=${domaineId}` : '/api/specialites/';
+            fetch(url)
+                .then(r => r.json())
+                .then(specialites => {
+                    specialites.forEach(s => {
+                        const opt = document.createElement('option');
+                        opt.value = s.id;
+                        opt.textContent = s.nom;
+                        if (prefillValue && prefillValue == s.id) {
+                            opt.selected = true;
+                        }
+                        ss.appendChild(opt);
+                    });
+                });
+        });
+    }
+    
+    // Initial load of Specialites (only if no domaine will be prefilled)
+    if (specialiteSelects.length > 0) {
+        const hasPrefillDomaine = Array.from(domaineSelects).some(s => s.dataset.prefill);
+        if (!hasPrefillDomaine) {
+            loadSpecialites(null);
+        }
+    }
+    
+    // Domaine change -> reload Specialites
+    domaineSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            loadSpecialites(this.value);
         });
     });
     

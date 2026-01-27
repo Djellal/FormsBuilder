@@ -28,5 +28,6 @@ urlpatterns = [
     # API endpoints
     path('api/facultes/', views.api_facultes, name='api_facultes'),
     path('api/domaines/', views.api_domaines, name='api_domaines'),
+    path('api/specialites/', views.api_specialites, name='api_specialites'),
     path('api/fields/<int:field_pk>/options/', views.api_child_options, name='api_child_options'),
 ]
