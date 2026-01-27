@@ -18,6 +18,7 @@ urlpatterns = [
     path('fields/<int:field_pk>/delete/', views.delete_field, name='delete_field'),
     path('forms/<int:form_pk>/submissions/', views.submission_list, name='submission_list'),
     path('submissions/<int:pk>/', views.submission_detail, name='submission_detail'),
+    path('submissions/<int:pk>/update-answer/<int:answer_id>/', views.update_answer, name='update_answer'),
     path('forms/<int:form_pk>/export/', views.export_csv, name='export_csv'),
     
     # Public form submission

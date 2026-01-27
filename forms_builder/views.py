@@ -450,6 +450,9 @@ def submission_detail(request, pk):
         messages.error(request, 'Access denied.')
         return redirect('form_list')
 
+    # Check if the current user is an admin
+    is_admin = request.user.is_staff or request.user.groups.filter(name='admin').exists()
+
     # Get all fields and answers for the form
     fields = submission.form.fields.select_related('parent_field').all()
     answers = submission.answers.all().select_related('field')
@@ -476,9 +479,11 @@ def submission_detail(request, pk):
         if field.field_type == FieldType.PANEL:
             continue  # Skip panel fields themselves
         elif field.parent_field_id and field.parent_field_id in panel_ids:
-            panel_children[field.parent_field_id].append(answer)
+            # Create a tuple of (answer, field) to pass both objects
+            panel_children[field.parent_field_id].append((answer, field))
         else:
-            standalone_answers.append(answer)
+            # Create a tuple of (answer, field) to pass both objects
+            standalone_answers.append((answer, field))
 
     # Attach children to panels
     for panel in panels:
@@ -490,6 +495,7 @@ def submission_detail(request, pk):
         'panels': panels,
         'standalone_answers': standalone_answers,
         'files': files,
+        'is_admin': is_admin,
     })
 
 
@@ -541,6 +547,35 @@ def api_specialites(request):
 def api_child_options(request, field_pk):
     parent_value = request.GET.get('parent_value', '')
     field = get_object_or_404(FormField, pk=field_pk)
-    
+
     options = [opt for opt in field.options_json if opt.get('parentValue') == parent_value]
     return JsonResponse(options, safe=False)
+
+
+@login_required
+def update_answer(request, pk, answer_id):
+    """Update an individual answer for admin-only fields"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+
+    answer = get_object_or_404(FormAnswer, pk=answer_id)
+
+    # Check if the user has permission to edit this answer
+    if answer.submission.form.created_by != request.user and not request.user.is_staff:
+        return JsonResponse({'error': 'Access denied'}, status=403)
+
+    # Check if the field is admin_only
+    if not answer.field.admin_only:
+        return JsonResponse({'error': 'Only admin-only fields can be edited here'}, status=403)
+
+    new_value = request.POST.get('value', '')
+
+    # Handle checkbox specially
+    if answer.field.field_type == 'checkbox':
+        new_value = '1' if request.POST.get('value') else '0'
+
+    answer.value_text = new_value
+    answer.save()
+
+    messages.success(request, f'Updated {answer.field.label} successfully!')
+    return redirect('submission_detail', pk=pk)

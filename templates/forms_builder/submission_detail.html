@@ -30,20 +30,43 @@
                         <div class="card-body">
                             <table class="table table-striped mb-0">
                                 <tbody>
-                                    {% for answer in panel.panel_answers %}
+                                    {% for answer, field in panel.panel_answers %}
                                     <tr>
-                                        <th style="width: 30%;">{{ answer.field.label }}</th>
+                                        <th style="width: 30%;">{{ field.label }}</th>
                                         <td>
-                                            {% if answer.field.field_type == 'file' %}
-                                                {% if answer.value_text %}
-                                                <a href="/media/uploads/{{ answer.value_text }}" target="_blank">
-                                                    <i class="bi bi-file-earmark"></i> {% trans "Download File" %}
-                                                </a>
-                                                {% else %}
-                                                <span class="text-muted">{% trans "No file" %}</span>
-                                                {% endif %}
+                                            {% if field.admin_only and is_admin %}
+                                                <form method="post" action="{% url 'update_answer' submission.id answer.id %}" class="d-inline">
+                                                    {% csrf_token %}
+                                                    {% if field.field_type == 'file' %}
+                                                        {% if answer.value_text %}
+                                                        <a href="/media/uploads/{{ answer.value_text }}" target="_blank">
+                                                            <i class="bi bi-file-earmark"></i> {% trans "Download File" %}
+                                                        </a>
+                                                        {% else %}
+                                                        <span class="text-muted">{% trans "No file" %}</span>
+                                                        {% endif %}
+                                                        <input type="hidden" name="value" value="{{ answer.value_text }}">
+                                                    {% elif field.field_type == 'textarea' %}
+                                                        <textarea name="value" class="form-control">{{ answer.value_text }}</textarea>
+                                                    {% elif field.field_type == 'checkbox' %}
+                                                        <input type="checkbox" name="value" value="1" {% if answer.value_text == '1' %}checked{% endif %}>
+                                                    {% else %}
+                                                        <input type="text" name="value" class="form-control" value="{{ answer.value_text|default:'' }}">
+                                                    {% endif %}
+                                                    <button type="submit" class="btn btn-sm btn-outline-primary mt-1">{% trans "Update" %}</button>
+                                                </form>
                                             {% else %}
-                                                {{ answer.value_text|default:"-"|linebreaksbr }}
+                                                {% if field.field_type == 'file' %}
+                                                    {% if answer.value_text %}
+                                                    <a href="/media/uploads/{{ answer.value_text }}" target="_blank">
+                                                        <i class="bi bi-file-earmark"></i> {% trans "Download File" %}
+                                                    </a>
+                                                    {% else %}
+                                                    <span class="text-muted">{% trans "No file" %}</span>
+                                                    {% endif %}
+                                                {% else %}
+                                                    {{ answer.value_text|default:"-"|linebreaksbr }}
+                                                {% endif %}
                                             {% endif %}
                                         </td>
                                     </tr>
@@ -59,20 +82,43 @@
                 {% if standalone_answers %}
                 <table class="table table-striped">
                     <tbody>
-                        {% for answer in standalone_answers %}
+                        {% for answer, field in standalone_answers %}
                         <tr>
-                            <th style="width: 30%;">{{ answer.field.label }}</th>
+                            <th style="width: 30%;">{{ field.label }}</th>
                             <td>
-                                {% if answer.field.field_type == 'file' %}
-                                    {% if answer.value_text %}
-                                    <a href="/media/uploads/{{ answer.value_text }}" target="_blank">
-                                        <i class="bi bi-file-earmark"></i> {% trans "Download File" %}
-                                    </a>
-                                    {% else %}
-                                    <span class="text-muted">{% trans "No file" %}</span>
-                                    {% endif %}
+                                {% if field.admin_only and is_admin %}
+                                    <form method="post" action="{% url 'update_answer' submission.id answer.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        {% if field.field_type == 'file' %}
+                                            {% if answer.value_text %}
+                                            <a href="/media/uploads/{{ answer.value_text }}" target="_blank">
+                                                <i class="bi bi-file-earmark"></i> {% trans "Download File" %}
+                                            </a>
+                                            {% else %}
+                                            <span class="text-muted">{% trans "No file" %}</span>
+                                            {% endif %}
+                                            <input type="hidden" name="value" value="{{ answer.value_text }}">
+                                        {% elif field.field_type == 'textarea' %}
+                                            <textarea name="value" class="form-control">{{ answer.value_text }}</textarea>
+                                        {% elif field.field_type == 'checkbox' %}
+                                            <input type="checkbox" name="value" value="1" {% if answer.value_text == '1' %}checked{% endif %}>
+                                        {% else %}
+                                            <input type="text" name="value" class="form-control" value="{{ answer.value_text|default:'' }}">
+                                        {% endif %}
+                                        <button type="submit" class="btn btn-sm btn-outline-primary mt-1">{% trans "Update" %}</button>
+                                    </form>
                                 {% else %}
-                                    {{ answer.value_text|default:"-"|linebreaksbr }}
+                                    {% if field.field_type == 'file' %}
+                                        {% if answer.value_text %}
+                                        <a href="/media/uploads/{{ answer.value_text }}" target="_blank">
+                                            <i class="bi bi-file-earmark"></i> {% trans "Download File" %}
+                                        </a>
+                                        {% else %}
+                                        <span class="text-muted">{% trans "No file" %}</span>
+                                        {% endif %}
+                                    {% else %}
+                                        {{ answer.value_text|default:"-"|linebreaksbr }}
+                                    {% endif %}
                                 {% endif %}
                             </td>
                         </tr>
