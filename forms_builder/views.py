@@ -14,6 +14,9 @@ from .forms import StudentRegistrationForm, FormForm, FormUpdateForm
 from academic.models import Faculte, Domaine, Specialite
 from django.contrib.auth.models import Group
 from django.contrib.auth import login
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment, PatternFill
+from openpyxl.utils import get_column_letter
 
 
 class AdminRequiredMixin(UserPassesTestMixin):
@@ -438,11 +441,40 @@ def submission_list(request, form_pk):
     if form.created_by != request.user and not request.user.is_staff:
         messages.error(request, 'Access denied.')
         return redirect('form_list')
-    
+
+    # Get all submissions with answers and fields
     submissions = form.submissions.all().prefetch_related('answers', 'answers__field')
+
+    # Check if the form has a faculty field
+    faculty_field_exists = form.fields.filter(field_type='select_faculte').exists()
+
+    # Apply faculty filter if a faculty is selected and the form has a faculty field
+    selected_faculty = None
+    if faculty_field_exists and request.GET.get('faculty'):
+        selected_faculty = request.GET.get('faculty')
+        # Filter submissions that have an answer for a faculty field with the selected value
+        submissions = submissions.filter(answers__field__field_type='select_faculte',
+                                        answers__value_text=selected_faculty).distinct()
+
+    # Get all possible faculties for this form if it has a faculty field
+    faculties = []
+    if faculty_field_exists:
+        # Get all unique faculty values from submissions
+        faculty_values = FormAnswer.objects.filter(
+            submission__form=form,
+            field__field_type='select_faculte'
+        ).values_list('value_text', flat=True).distinct()
+
+        # Get the faculties from the academic app
+        from academic.models import Faculte
+        faculties = Faculte.objects.filter(nom__in=faculty_values)
+
     return render(request, 'forms_builder/submission_list.html', {
         'form': form,
         'submissions': submissions,
+        'faculty_field_exists': faculty_field_exists,
+        'faculties': faculties,
+        'selected_faculty': selected_faculty,
     })
 
 
@@ -507,22 +539,131 @@ def export_csv(request, form_pk):
     form = get_object_or_404(Form, pk=form_pk)
     if form.created_by != request.user and not request.user.is_staff:
         return HttpResponse('Access denied', status=403)
-    
+
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = f'attachment; filename="{form.slug}_submissions.csv"'
-    
+
     writer = csv.writer(response)
     fields = form.fields.all()
     headers = ['Submission ID', 'Submitted At', 'Status'] + [f.label for f in fields]
     writer.writerow(headers)
-    
-    for submission in form.submissions.all():
+
+    # Preload all answers and files for efficiency
+    submissions_with_data = form.submissions.prefetch_related(
+        'answers', 'files'
+    ).all()
+
+    for submission in submissions_with_data:
         row = [submission.id, submission.submitted_at, submission.status]
+
+        # Create a dictionary of answers for quick lookup
         answer_dict = {a.field_id: a.value_text for a in submission.answers.all()}
+
+        # Create a dictionary of uploaded files for quick lookup
+        file_dict = {}
+        for uploaded_file in submission.files.all():
+            file_dict[uploaded_file.field_id] = uploaded_file
+
+        # Process each field in the form
         for field in fields:
-            row.append(answer_dict.get(field.id, ''))
+            if field.field_type == FieldType.FILE:
+                # For file fields, get the uploaded file and return its absolute URL
+                uploaded_file = file_dict.get(field.id)
+                if uploaded_file:
+                    # Construct the absolute URL for the file
+                    file_url = request.build_absolute_uri(f'/media/uploads/{uploaded_file.stored_filename}')
+                    row.append(file_url)
+                else:
+                    row.append('')
+            else:
+                # For non-file fields, use the answer value
+                row.append(answer_dict.get(field.id, ''))
+
         writer.writerow(row)
-    
+
+    return response
+
+
+@login_required
+def export_excel(request, form_pk):
+    form = get_object_or_404(Form, pk=form_pk)
+    if form.created_by != request.user and not request.user.is_staff:
+        return HttpResponse('Access denied', status=403)
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename="{form.slug}_submissions.xlsx"'
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = f"{form.title[:31]} Submissions"  # Sheet names limited to 31 chars
+
+    # Define styles
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+    center_alignment = Alignment(horizontal="center", vertical="center")
+
+    # Get all fields for headers
+    fields = form.fields.all()
+    headers = ['Submission ID', 'Submitted At', 'Status'] + [f.label for f in fields]
+
+    # Write headers
+    for col_num, header in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col_num, value=header)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = center_alignment
+
+    # Preload all answers and files for efficiency
+    submissions_with_data = form.submissions.prefetch_related(
+        'answers', 'files'
+    ).all()
+
+    # Write data rows
+    for row_num, submission in enumerate(submissions_with_data, 2):
+        row_data = [submission.id, submission.submitted_at, submission.status]
+
+        # Create a dictionary of answers for quick lookup
+        answer_dict = {a.field_id: a.value_text for a in submission.answers.all()}
+
+        # Create a dictionary of uploaded files for quick lookup
+        file_dict = {}
+        for uploaded_file in submission.files.all():
+            file_dict[uploaded_file.field_id] = uploaded_file
+
+        # Add field values in the same order as headers
+        for field in fields:
+            if field.field_type == FieldType.FILE:
+                # For file fields, get the uploaded file and return its absolute URL
+                uploaded_file = file_dict.get(field.id)
+                if uploaded_file:
+                    # Construct the absolute URL for the file
+                    file_url = request.build_absolute_uri(f'/media/uploads/{uploaded_file.stored_filename}')
+                    row_data.append(file_url)
+                else:
+                    row_data.append('')
+            else:
+                # For non-file fields, use the answer value
+                row_data.append(answer_dict.get(field.id, ''))
+
+        for col_num, value in enumerate(row_data, 1):
+            ws.cell(row=row_num, column=col_num, value=str(value) if value is not None else '')
+
+    # Auto-adjust column widths
+    for column in ws.columns:
+        max_length = 0
+        column_letter = get_column_letter(column[0].column)
+
+        for cell in column:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(str(cell.value))
+            except:
+                pass
+
+        adjusted_width = min(max_length + 2, 50)  # Limit max width to 50
+        ws.column_dimensions[column_letter].width = adjusted_width
+
+    wb.save(response)
     return response
 
 

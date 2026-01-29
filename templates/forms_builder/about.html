@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}{% trans "About" %} - Ufas1Forms{% endblock %}
 
@@ -8,7 +9,7 @@
     <div class="col-lg-8">
         <div class="card mb-4">
             <div class="card-body text-center py-5">
-                <i class="bi bi-ui-checks-grid display-icon"></i>
+                <img src="{% static 'imgs/logo-ufas-100x70.png' %}" alt="Ufas1Forms Logo" class="mb-4" style="height: 70px;">
                 <h1 class="mt-3 text-gradient">Ufas1Forms</h1>
                 <p class="lead text-muted">{% trans "Dynamic Form Builder for Registration, Surveys, and Data Collection" %}</p>
                 <div class="d-flex justify-content-center gap-2 mt-4">
@@ -36,7 +37,7 @@
                     {% endblocktrans %}
                 </p>
                 <p>
-                    {% trans "The application features a visual form builder, multiple field types, cascading dropdowns, conditional field visibility, and comprehensive response management with CSV export capabilities." %}
+                    {% trans "The application features a visual form builder, multiple field types, cascading dropdowns, conditional field visibility, and comprehensive response management with CSV and Excel export capabilities." %}
                 </p>
             </div>
         </div>
@@ -56,6 +57,7 @@
                             <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>{% trans "File Uploads" %}</li>
                             <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>{% trans "Response Management" %}</li>
                             <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>{% trans "CSV Export" %}</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>{% trans "Excel Export" %}</li>
                             <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>{% trans "Public & Private Forms" %}</li>
                             <li class="mb-0"><i class="bi bi-check-circle text-success me-2"></i>{% trans "Submission Updates" %}</li>
                         </ul>
@@ -72,7 +74,7 @@
                             <li class="mb-2"><i class="bi bi-filetype-py text-primary me-2"></i>Python 3.12</li>
                             <li class="mb-2"><i class="bi bi-box text-success me-2"></i>Django 6.0</li>
                             <li class="mb-2"><i class="bi bi-bootstrap text-purple me-2"></i>Bootstrap 5.3</li>
-                            <li class="mb-2"><i class="bi bi-database text-info me-2"></i>SQLite</li>
+                            <li class="mb-2"><i class="bi bi-database text-info me-2"></i>PostgreSQL</li>
                             <li class="mb-2"><i class="bi bi-filetype-js text-warning me-2"></i>JavaScript (Sortable.js)</li>
                             <li class="mb-0"><i class="bi bi-icons text-secondary me-2"></i>Bootstrap Icons</li>
                         </ul>

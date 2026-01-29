@@ -20,6 +20,7 @@ urlpatterns = [
     path('submissions/<int:pk>/', views.submission_detail, name='submission_detail'),
     path('submissions/<int:pk>/update-answer/<int:answer_id>/', views.update_answer, name='update_answer'),
     path('forms/<int:form_pk>/export/', views.export_csv, name='export_csv'),
+    path('forms/<int:form_pk>/export-excel/', views.export_excel, name='export_excel'),
     
     # Public form submission
     path('f/<slug:slug>/', views.form_submit_view, name='form_submit'),

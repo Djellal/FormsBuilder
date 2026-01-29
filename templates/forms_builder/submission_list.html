@@ -15,10 +15,49 @@
         </nav>
         <h2 class="mt-2"><i class="bi bi-inbox"></i> {% trans "Submissions" %}</h2>
     </div>
-    <a href="{% url 'export_csv' form.pk %}" class="btn btn-success">
-        <i class="bi bi-download"></i> {% trans "Export CSV" %}
-    </a>
+    <div class="btn-group">
+        <a href="{% url 'export_csv' form.pk %}" class="btn btn-success">
+            <i class="bi bi-download"></i> {% trans "Export CSV" %}
+        </a>
+        <a href="{% url 'export_excel' form.pk %}" class="btn btn-primary">
+            <i class="bi bi-file-earmark-spreadsheet"></i> {% trans "Export Excel" %}
+        </a>
+    </div>
 </div>
+
+{% if faculty_field_exists %}
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="facultyFilter" class="form-label">{% trans "Filter by Faculty" %}</label>
+            </div>
+            <div class="col-auto">
+                <select name="faculty" id="facultyFilter" class="form-select">
+                    <option value="">{% trans "All Faculties" %}</option>
+                    {% for faculty in faculties %}
+                        <option value="{{ faculty.nom }}" {% if selected_faculty == faculty.nom %}selected{% endif %}>
+                            {{ faculty.nom }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="bi bi-filter"></i> {% trans "Apply Filter" %}
+                </button>
+            </div>
+            {% if selected_faculty %}
+            <div class="col-auto">
+                <a href="?" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle"></i> {% trans "Clear Filter" %}
+                </a>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endif %}
 
 {% if submissions %}
 <div class="card">
