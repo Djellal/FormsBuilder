@@ -16,48 +16,55 @@
         <h2 class="mt-2"><i class="bi bi-inbox"></i> {% trans "Submissions" %}</h2>
     </div>
     <div class="btn-group">
-        <a href="{% url 'export_csv' form.pk %}" class="btn btn-success">
+        <a href="{% url 'export_csv' form.pk %}{% if selected_faculty or search_query %}?{% if selected_faculty %}faculty={{ selected_faculty }}{% endif %}{% if selected_faculty and search_query %}&{% endif %}{% if search_query %}q={{ search_query }}{% endif %}{% endif %}" class="btn btn-success">
             <i class="bi bi-download"></i> {% trans "Export CSV" %}
         </a>
-        <a href="{% url 'export_excel' form.pk %}" class="btn btn-primary">
+        <a href="{% url 'export_excel' form.pk %}{% if selected_faculty or search_query %}?{% if selected_faculty %}faculty={{ selected_faculty }}{% endif %}{% if selected_faculty and search_query %}&{% endif %}{% if search_query %}q={{ search_query }}{% endif %}{% endif %}" class="btn btn-primary">
             <i class="bi bi-file-earmark-spreadsheet"></i> {% trans "Export Excel" %}
         </a>
     </div>
 </div>
 
-{% if faculty_field_exists %}
 <div class="card mb-4">
     <div class="card-body">
         <form method="GET" class="row g-3 align-items-center">
             <div class="col-auto">
-                <label for="facultyFilter" class="form-label">{% trans "Filter by Faculty" %}</label>
+                <label for="searchBox" class="form-label">{% trans "Search" %}</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" name="q" id="searchBox" class="form-control" 
+                       placeholder="{% trans 'Search submissions...' %}" value="{{ search_query|default:'' }}">
+            </div>
+            {% if faculty_field_exists %}
+            <div class="col-auto">
+                <label for="facultyFilter" class="form-label">{% trans "Faculty" %}</label>
             </div>
             <div class="col-auto">
                 <select name="faculty" id="facultyFilter" class="form-select">
                     <option value="">{% trans "All Faculties" %}</option>
                     {% for faculty in faculties %}
-                        <option value="{{ faculty.nom }}" {% if selected_faculty == faculty.nom %}selected{% endif %}>
+                        <option value="{{ faculty.id }}" {% if selected_faculty == faculty.id|stringformat:"s" %}selected{% endif %}>
                             {{ faculty.nom }}
                         </option>
                     {% endfor %}
                 </select>
             </div>
+            {% endif %}
             <div class="col-auto">
                 <button type="submit" class="btn btn-outline-primary">
-                    <i class="bi bi-filter"></i> {% trans "Apply Filter" %}
+                    <i class="bi bi-search"></i> {% trans "Search" %}
                 </button>
             </div>
-            {% if selected_faculty %}
+            {% if search_query or selected_faculty %}
             <div class="col-auto">
                 <a href="?" class="btn btn-outline-secondary">
-                    <i class="bi bi-x-circle"></i> {% trans "Clear Filter" %}
+                    <i class="bi bi-x-circle"></i> {% trans "Clear" %}
                 </a>
             </div>
             {% endif %}
         </form>
     </div>
 </div>
-{% endif %}
 
 {% if submissions %}
 <div class="card">

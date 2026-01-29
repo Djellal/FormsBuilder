@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
-from django.db.models import Count, Max
+from django.db.models import Count, Max, Q
 import csv
 import json
 
@@ -452,22 +452,27 @@ def submission_list(request, form_pk):
     selected_faculty = None
     if faculty_field_exists and request.GET.get('faculty'):
         selected_faculty = request.GET.get('faculty')
-        # Filter submissions that have an answer for a faculty field with the selected value
+        # Filter submissions that have an answer for a faculty field with the selected faculty ID
         submissions = submissions.filter(answers__field__field_type='select_faculte',
                                         answers__value_text=selected_faculty).distinct()
+
+    # Apply search filter
+    search_query = request.GET.get('q', '').strip()
+    if search_query:
+        submissions = submissions.filter(
+            Q(submitted_by__username__icontains=search_query) |
+            Q(submitted_by__first_name__icontains=search_query) |
+            Q(submitted_by__last_name__icontains=search_query) |
+            Q(submitted_by__email__icontains=search_query) |
+            Q(answers__value_text__icontains=search_query)
+        ).distinct()
 
     # Get all possible faculties for this form if it has a faculty field
     faculties = []
     if faculty_field_exists:
-        # Get all unique faculty values from submissions
-        faculty_values = FormAnswer.objects.filter(
-            submission__form=form,
-            field__field_type='select_faculte'
-        ).values_list('value_text', flat=True).distinct()
-
-        # Get the faculties from the academic app
+        # Get all faculties from the academic app
         from academic.models import Faculte
-        faculties = Faculte.objects.filter(nom__in=faculty_values)
+        faculties = Faculte.objects.all()
 
     return render(request, 'forms_builder/submission_list.html', {
         'form': form,
@@ -475,6 +480,7 @@ def submission_list(request, form_pk):
         'faculty_field_exists': faculty_field_exists,
         'faculties': faculties,
         'selected_faculty': selected_faculty,
+        'search_query': search_query,
     })
 
 
@@ -553,6 +559,25 @@ def export_csv(request, form_pk):
         'answers', 'files'
     ).all()
 
+    # Apply faculty filter if provided
+    selected_faculty = request.GET.get('faculty')
+    if selected_faculty:
+        submissions_with_data = submissions_with_data.filter(
+            answers__field__field_type='select_faculte',
+            answers__value_text=selected_faculty
+        ).distinct()
+
+    # Apply search filter if provided
+    search_query = request.GET.get('q', '').strip()
+    if search_query:
+        submissions_with_data = submissions_with_data.filter(
+            Q(submitted_by__username__icontains=search_query) |
+            Q(submitted_by__first_name__icontains=search_query) |
+            Q(submitted_by__last_name__icontains=search_query) |
+            Q(submitted_by__email__icontains=search_query) |
+            Q(answers__value_text__icontains=search_query)
+        ).distinct()
+
     for submission in submissions_with_data:
         row = [submission.id, submission.submitted_at, submission.status]
 
@@ -617,6 +642,25 @@ def export_excel(request, form_pk):
     submissions_with_data = form.submissions.prefetch_related(
         'answers', 'files'
     ).all()
+
+    # Apply faculty filter if provided
+    selected_faculty = request.GET.get('faculty')
+    if selected_faculty:
+        submissions_with_data = submissions_with_data.filter(
+            answers__field__field_type='select_faculte',
+            answers__value_text=selected_faculty
+        ).distinct()
+
+    # Apply search filter if provided
+    search_query = request.GET.get('q', '').strip()
+    if search_query:
+        submissions_with_data = submissions_with_data.filter(
+            Q(submitted_by__username__icontains=search_query) |
+            Q(submitted_by__first_name__icontains=search_query) |
+            Q(submitted_by__last_name__icontains=search_query) |
+            Q(submitted_by__email__icontains=search_query) |
+            Q(answers__value_text__icontains=search_query)
+        ).distinct()
 
     # Write data rows
     for row_num, submission in enumerate(submissions_with_data, 2):
